@@ -19,4 +19,48 @@ In this home automation project, we aim to address several key concerns often en
 **6. Low Technical Knowledge Requirement**
 - Our solution is designed to be easily understandable and operable by individuals with varying levels of technical expertise. Intuitive interfaces and straightforward instructions ensure accessibility for most users.
 
-By adhering to these objectives, we aim to create a robust, user-centric home automation solution that prioritizes longevity, flexibility, and ease of use.
+# Key project requirements
+- Event driven system for input (switchs, buttons)
+- Support for relay modules (shades, light, doors, power socket)
+- Data driven events (temperate, wind, humidity, light)
+- User friendly overview of the colledted data
+- System health checking
+- Alarm system
+
+# Hardware
+This project uses Raspberry Pi and Arduino Machine Control
+- Raspberry Pi in relation along with Node-red has the main control
+- while Arduino Portenta Machine Control is used for extended use of interfaces
+## Requirements
+- Central logic control 
+  - The Raspberry Pi and the I/O control is held in a close distance, preferably in a single electrical cabinet
+- Communication with I/O devices over I2C
+  - Why I2C and not Modbus rs485 for everything? Simply because I2C is easier to implement, replace, control etc. I2C GPIO expanders can be attached to any relay or input module
+- Modbus over RS485 to monitor other devices where I2C is not applicable.
+- 
+## Components
+- 16 channel realy relay boards without any comunication logic attachec, eg. i2c, rs485, can, wifi
+  - Devices control where voltage and load is important
+  - Example: https://t.ly/4dGbl
+- 16 channel input module with integrated I2C (preferably this should be replaced with general purpuse 3-30V optocoupler board) - missing interrupt pin
+  - Example: https://t.ly/iOiLO
+- 16 channel input module Raspberry Pi
+  - https://t.ly/y5IKt
+- I2C General purpose input/output (GPIO) Expander
+  - PCF8575 is prefered GPIO chip to cover the needs. The market offers several prebuild boards. PCF8575 offers base speed of 400 KHz and 16 channel I/O pins
+    - Example: https://t.ly/a7fcQ
+  - MCP23017 similar to the pcf chip with the main difference of higher I2C speeds of up to 1.7 MHz and two GPIO block (block A, block B where each has its own interrup pin)
+    - Example: https://t.ly/eLE4Y
+- Long range I2C Devices - in cases where the device is not held in a central electrical cabinet and the only option is to use i2c we need to make sure the I2C signal is extended
+  - I2C extender - https://t.ly/ECtco, https://t.ly/QqwU2, https://t.ly/Jqevm
+  - I2C repeter - P82B715
+- Sensors
+  - Bosch environment sensor BME680 - ensures precise measurements of gas, pressure, humidity, and temperature, with optimized power usage for prolonged stability and air quality monitoring.
+  - PT100 or PT1000 to measure temperature where BME680 is not applicable
+    - Example: https://t.ly/0FrNc
+- I2C additional
+  - Connectors: I2C Grove, STEMMA QT
+  - I2C addresses: https://t.ly/7jOsZ
+- Multiple I2C devices
+  - Example: https://t.ly/tvH5P
+
