@@ -29,7 +29,7 @@ In this home automation project, we aim to address several key concerns often en
 
 # Hardware
 This project uses Raspberry Pi and Arduino Machine Control
-- Raspberry Pi in relation along with Node-red has the main control
+- Raspberry Pi in relation along with Node-RED has the main control
 - while Arduino Portenta Machine Control is used for extended use of interfaces
 ## Requirements
 - Central logic control 
@@ -64,3 +64,38 @@ This project uses Raspberry Pi and Arduino Machine Control
 - Multiple I2C devices
   - Example: https://t.ly/tvH5P
 
+
+# Software 
+## Node-RED
+Preferably use docker for Node-RED, but will have to find a way to expose GPIO pins
+```bash
+docker run --restart=always --detach --name nodered -p 1880:1880 --device=/dev/i2c-1 nodered/node-red
+```
+
+### Packages
+- RPi GIPO - https://t.ly/aH2jo
+- I2C scanning - https://t.ly/bjiXP
+- Node-RED dashboard - https://t.ly/3P1JP
+- GPIO extenders - https://t.ly/lA1G-
+  - This package could be improved with little extra work (Single component for all pins, single call to extract register data to optimize the flow)
+
+## InfluxDB
+InfluxDB is a real-time insights from any time series data with a single, purpose-built database.  
+```bash
+docker run --restart=always --detach --name influxdb -p 8086:8086 influxdb:2
+```
+
+## Grafana
+Grafana is an open-source, multi-platform data analytics and interactive data visualization solution.  
+Grafana can connect with basically every possible data source, such as InfluxDB.
+```bash
+docker run --restart=always --detach --name grafana -p 3000:3000 grafana/grafana
+```
+
+## EMQX
+EMQX is an open-source, highly scalable, and feature-rich MQTT broker designed for IoT and real-time messaging applications.  
+It supports up to 100 million concurrent IoT device connections per cluster while maintaining a throughput of 1 million messages per second and a millisecond latency.  
+MQTT is used to open communictaion between Raspberry Pi and Arduino
+```bash
+docker run --restart=always --detach --name emqx -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p 18083:18083  emqx:5.5.1
+```
