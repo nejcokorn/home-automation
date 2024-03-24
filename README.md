@@ -70,7 +70,9 @@ This project uses Raspberry Pi and Arduino Machine Control
 - 1-Wire
   - [Setup 1-Wire on Raspberry Pi](https://pinout.xyz/pinout/1_wire)
   - [Temperature sensor DS18B20](https://www.amazon.de/-/en/AZDelivery-Stainless-Temperature-Waterproof-Compatible/dp/B07KNQJ3D7/ref=sr_1_6?crid=2HG1SMT39XVDG&dib=eyJ2IjoiMSJ9.XdeEgp9CgEREBq9z3rEwyn-u6YslVqoOq-Z5UQ0Qovi9HH8RfHxUao7jpj9nLwpDnhxn8jd7CN50pNPFg7KcDdG3Fpn7IUrHUslzcQ-A1Iv0yE5Aa0lGFjKBPjUOog2cFEhqJ9UC5GIQnsgFED0CohKROIUMluZNNAV9y7HrlJYq1m086jIBYok0WaEJTPvmtswWxXSZsJ0FYw_wX6Urfy4EEtOf17s04_98B1URFdRJXdGOQJO8XvomMkd0ibz2khlk_Np9pyUOa83OmDlFN1iBdiygE-RBFRxMzeW_FvE._u0CrHM2dPLWBblmLUgHRFGawB1Co3x2vFj-qZNbD8g&dib_tag=se&keywords=DS18B20&qid=1711287881&sprefix=ds18b20%2Caps%2C105&sr=8-6&th=1)
-  - 
+  - [DS18B20 on RJ45](https://www.unipi.technology/1-wire-temperature-sensor-10-m-p577)
+  - [RJ45 hub](https://www.aliexpress.com/item/4000201139432.html?spm=a2g0o.detail.pcDetailTopMoreOtherSeller.6.4750Z0OpZ0Opr8&gps-id=pcDetailTopMoreOtherSeller&scm=1007.40000.327270.0&scm_id=1007.40000.327270.0&scm-url=1007.40000.327270.0&pvid=49ed7443-02c4-44da-8c90-0e1da987261e&_t=gps-id:pcDetailTopMoreOtherSeller,scm-url:1007.40000.327270.0,pvid:49ed7443-02c4-44da-8c90-0e1da987261e,tpp_buckets:668%232846%238108%231977&pdp_npi=4%40dis%21EUR%2118.45%2118.45%21%21%2119.55%2119.55%21%40210307bf17113131825435022e5162%2110000000763740227%21rec%21DE%21177306676%21&utparam-url=scene%3ApcDetailTopMoreOtherSeller%7Cquery_from%3A&search_p4p_id=202403241346225886633656498740913014_5)
+  - [DS18B20 5x10m](https://www.aliexpress.com/item/1005005757890693.html?spm=a2g0o.productlist.main.7.56bc70862SMXUA&algo_pvid=e3bef03f-807f-41ce-8f3e-2c5b09732a02&algo_exp_id=e3bef03f-807f-41ce-8f3e-2c5b09732a02-3&pdp_npi=4%40dis%21EUR%2117.81%2114.25%21%21%2118.87%2115.10%21%402101e83017113136312465889efae0%2112000034246789615%21sea%21DE%21177306676%21&curPageLogUid=ZETpUSUx2reu&utparam-url=scene%3Asearch%7Cquery_from%3A)
 
 # Software 
 ## Node-RED
