@@ -67,6 +67,10 @@ This project uses Raspberry Pi and Arduino Machine Control
 - I2C additional
   - Connectors: [I2C Grove, STEMMA QT](https://www.adafruit.com/product/4528)
   - [I2C addresses](https://learn.adafruit.com/i2c-addresses/the-list)
+- 1-Wire
+  - [Setup 1-Wire on Raspberry Pi](https://pinout.xyz/pinout/1_wire)
+  - [Temperature sensor DS18B20](https://www.amazon.de/-/en/AZDelivery-Stainless-Temperature-Waterproof-Compatible/dp/B07KNQJ3D7/ref=sr_1_6?crid=2HG1SMT39XVDG&dib=eyJ2IjoiMSJ9.XdeEgp9CgEREBq9z3rEwyn-u6YslVqoOq-Z5UQ0Qovi9HH8RfHxUao7jpj9nLwpDnhxn8jd7CN50pNPFg7KcDdG3Fpn7IUrHUslzcQ-A1Iv0yE5Aa0lGFjKBPjUOog2cFEhqJ9UC5GIQnsgFED0CohKROIUMluZNNAV9y7HrlJYq1m086jIBYok0WaEJTPvmtswWxXSZsJ0FYw_wX6Urfy4EEtOf17s04_98B1URFdRJXdGOQJO8XvomMkd0ibz2khlk_Np9pyUOa83OmDlFN1iBdiygE-RBFRxMzeW_FvE._u0CrHM2dPLWBblmLUgHRFGawB1Co3x2vFj-qZNbD8g&dib_tag=se&keywords=DS18B20&qid=1711287881&sprefix=ds18b20%2Caps%2C105&sr=8-6&th=1)
+  - 
 
 # Software 
 ## Node-RED
@@ -76,11 +80,12 @@ docker run --restart=always --detach --name nodered -p 1880:1880 --device=/dev/i
 ```
 
 ### Packages
-- RPi GIPO - https://t.ly/aH2jo
-- I2C scanning - https://t.ly/bjiXP
-- Node-RED dashboard - https://t.ly/3P1JP
-- GPIO extenders - https://t.ly/lA1G-
+- [Node-RED RPi GIPO](https://nodered.org/docs/faq/interacting-with-pi-gpio#node-red-node-pi-gpio)
+- [Node-RED I2C scanning](https://flows.nodered.org/node/node-red-contrib-i2c)
+- [Node-RED dashboard](https://flows.nodered.org/node/@flowfuse/node-red-dashboard)
+- [Node-RED GPIO extenders](https://flows.nodered.org/node/@joe-ab1do/mcp-pcf-aio)
   - This package could be improved with little extra work (Single component for all pins, single call to extract register data to optimize the flow)
+- [NPM package I2C bus](https://www.npmjs.com/package/i2c-bus)
 
 ## InfluxDB
 InfluxDB is a real-time insights from any time series data with a single, purpose-built database.  
