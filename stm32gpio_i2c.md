@@ -19,14 +19,14 @@ Each I2C transaction consists of **4 bytes**:
 
 ### Message Frame Format
 ```
-010A AAAX TLRP PPPP DDDD DDDD DDDD DDDD
+010A AAAX CTLP PPPP DDDD DDDD DDDD DDDD
 ```
 Where:
 - **X** → `1 = Read`, `0 = Write`
 - **AAAA** → Optional address bits
+- **C (Configure)** → `1 = Configure STM32`
 - **T (Type)** → `0 = Output`, `1 = Input`
 - **L (Limit)** → `1 = Specific port`, `0 = All ports`
-- **R** → Reserved bit
 - **P (Port Number)** → `0-32`
 - **D (Data)** → 16-bit data payload (sent as **LSB first, then MSB**)
 
