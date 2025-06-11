@@ -17,7 +17,7 @@ stm32gpio/<device_id>/<type>/<signal>/<port>/<action>
 * `<device_id>`: Device ID (e.g., `20`) or `+` for wildcard
 * `<type>`: Port direction: `input`, `output`
 * `<signal>`: Signal type: `digital`, `analog`
-* `<port>`: Port number `0`–`31` or `+`
+* `<port>`: Port number `1`–`31` or `+` for all ports
 * `<action>`: Operation: `set`, `get`, `event`, `error`
 
 ---
