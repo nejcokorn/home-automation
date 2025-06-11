@@ -1,10 +1,10 @@
 # STM32GPIO I2C Communication Protocol
 
 ## I2C Addressing
-- The protocol reserves **16 addresses**, ranging from **0x20 to 0x2F**.
-- The address format is **010A AAAX**, where:
+- The protocol reserves **16 addresses**, ranging from **0x20 to 0x3F**.
+- The address format is **01AA AAAX**, where:
   - `0100 000X` = **0x20** (starting address)
-  - `0101 111X` = **0x2F** (ending address)
+  - `0111 111X` = **0x3F** (ending address)
   - `X` = **1 for read, 0 for write**.
 
 ## Data Packet Structure
@@ -19,11 +19,11 @@ Each I2C transaction consists of **4 bytes**:
 
 ### Message Frame Format
 ```
-010A AAAX CTSP PPPP DDDD DDDD DDDD DDDD
+01AA AAAX CTSP PPPP DDDD DDDD DDDD DDDD
 ```
 Where:
 - **X** → `1 = Read`, `0 = Write`
-- **AAAA** → Optional address bits
+- **AAAAA** → Optional address bits
 - **C (Configure)** → `1 = Configure STM32`
 - **T (Type)** → `0 = Output`, `1 = Input`
 - **S (Signal)** → `0 = Digital ports`, `1 = Analog ports`
@@ -37,7 +37,7 @@ Where:
 
 ## Example Transactions
 ### Writing Data to a Specific Port
-1. Master sends **I2C address (0x20 - 0x2F)** with write bit (`X=0`).
+1. Master sends **I2C address (0x20 - 0x3F)** with write bit (`X=0`).
 2. Sends **command/register byte**.
 3. Sends **two data bytes** (**LSB first, then MSB**).
 4. Slave acknowledges and processes the data.
