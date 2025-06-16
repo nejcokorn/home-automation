@@ -24,7 +24,7 @@ Each I2C transaction consists of **4 bytes**:
 Where:
 - **X** → `1 = Read`, `0 = Write`
 - **AAAAA** → Optional address bits
-- **C (Configure)** → `1 = Configure STM32`
+- **C (Configure)** → `0 = Read/Write data`, `1 = Configure STM32`
 - **T (Type)** → `0 = Output`, `1 = Input`
 - **S (Signal)** → `0 = Digital ports`, `1 = Analog ports`
 - **P (Port Number)** → `0 = All ports, 1-32 = specific port`
