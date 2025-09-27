@@ -29,7 +29,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **T (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
   * **xxxxx (Reserved)**: set to `0`.
 
-* **B4 Port**: `0 = All ports` (only valid with singular type), `1–255 = specific port`.
+* **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 * **B5..B8 Data**: 32-bit payload, **MSB first** (B5), then LSB (B8).
 
 ---
@@ -44,11 +44,11 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 ## 3. Data Class and Port Semantics
 
-### 3.1 Singular (B3-D = 0)
+### 3.1 Manage multiple ports (B3-D = 0)
 
-* **Read, Port = 0**: returns a **bitmap** of singular states in `Data` (bit 0 → port 1, …).
+* **Read, Port = 0**: returns a **bitmap** of all digital input/output port states in `Data` (bit 0 → port 1, …).
 * **Read, Port = k (1–255)**: returns state of port *k* in `Data bit0` (`0/1`).
-* **Write, Port = 0**: applies `Data` bitmap to all singular outputs.
+* **Write, Port = 0**: applies `Data` bitmap to all outputs.
 * **Write, Port = k**: applies `Data bit0` to port *k*.
 
 ### 3.2 Byte (B3-D = 1)
@@ -102,7 +102,7 @@ Data = <version/capability information>
 | B1   | From     | Sender ID (`0x00–0xFF`)                                            |
 | B2   | CommCtrl | Bit-coded: `R D A E O C xx`                                        |
 | B3   | DataCtrl | Bit-coded: `D TT xxxxx`                                            |
-| B4   | Port     | `0` = all ports (only valid with singular type), `1–255` = port ID |
+| B4   | Port     | `0` = all ports, `1–255` = port ID |
 | B5   | Data MSB | Data payload, most significant byte                                |
 | B6   | Data     | Data payload                                                       |
 | B7   | Data     | Data payload                                                       |
@@ -112,7 +112,7 @@ Data = <version/capability information>
 
 ## 7. Examples
 
-### 7.1 Write Singular (bit) — Port 5 = ON
+### 7.1 Write to a specific port (bit) — Port 5 = ON
 
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
@@ -136,7 +136,7 @@ Data=0x00000001
 
 ---
 
-### 7.2 Write Singular (bit) — Global Bitmap
+### 7.2 Write to all digital output ports (bit) — Global Bitmap
 
 ```
 CAN ID   = 0x212
