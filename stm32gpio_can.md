@@ -6,7 +6,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  REAO Cxxx  DTTx xxx   PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+XXXX XXXX  REAO Cxxx  DTTx xxxx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
