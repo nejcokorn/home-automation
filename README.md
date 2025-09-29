@@ -28,7 +28,7 @@ In this home automation project, we aim to address several key concerns often en
 - Alarm system
 
 # Hardware
-This project uses Raspberry Pi and Arduino Machine Control
+This project uses Raspberry Pi
 - Raspberry Pi 4/5 with Node-RED or Home Automation, which controls the devices locally over CAN2.0
 ## Requirements
 - Central logic control 
