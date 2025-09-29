@@ -81,6 +81,45 @@ Then you can use `ifconfig` to see `can0`.
 
 If everything is wired and configured correctly, you should see the frames being sent/received.
 
+6. Enable Automatic Startup of `can0` on System Reboot
+
+Create a new **systemd** service:
+
+```bash
+sudo nano /etc/systemd/system/can0.service
+```
+
+Insert the following content:
+
+```ini
+[Unit]
+Description=Set up can0 interface
+Requires=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ip link set can0 up type can bitrate 500000
+ExecStartPost=/sbin/ifconfig can0 txqueuelen 65536
+ExecStop=/sbin/ip link set can0 down
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Save the file, then enable and start the service:
+
+```bash
+sudo systemctl enable can0.service
+sudo systemctl start can0.service
+```
+
+---
+
+Do you also want me to add a short verification step (e.g. how to check if `can0` is active after reboot)?
+
+
 ### Enabling / Using RS-485 Interface
 
 1. Enable the UART serial interface. Use:
