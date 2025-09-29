@@ -135,5 +135,5 @@ If you only have one HAT and want to test CAN functionality:
   cansend can0 000#11.22.33.44
   ```
 
-If it works, the sent frame should be received by itself. ([waveshare.com][1])
+If it works, the sent frame should be received by itself.
 
