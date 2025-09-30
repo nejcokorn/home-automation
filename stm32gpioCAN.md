@@ -28,7 +28,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 * **B3 DataCtrl (Data Control)** — bit-coded:
 
   * **C (Config)**: `1 = Configure device`.
-  * **M (EPROM)**: `1 = Save configuration to EPROM`.
+  * **M (EEPROM)**: `1 = Save configuration to EEPROM`.
   * **O (Operation)**: `0 = Read`, `1 = Write`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
   * **T (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
