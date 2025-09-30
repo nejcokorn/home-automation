@@ -36,7 +36,18 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 * **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 
-* **B5..B8 Data**: 32-bit payload, **MSB first** (B5), then LSB (B8).
+* **When C=0 (Config) & M=0(Save configuration to EEPROM)**:
+  * **B5..B8 Data**: 32-bit payload, **MSB first** (B5), then LSB (B8).
+* **When C=1 (Config)**:
+    * **B5 ConfigCtrl**:
+      * **B (Button)**: `1 = Input acts as Button`.
+      * **S (Switch)**: `1 = Input acts as Switch`.
+      * **I (Immediate action)**: `1 = Bypass immediately`.
+      * **C (Lost connection)**: `1 = Bypass on lost connection`.
+      * **D (DIP switch)**: `1 =  Bypass is determined by the DIP switch`.
+    * **B6 (Target)** `Target output port(s), B4 is considered source port`
+    * **B7 (Debounce)** `Switch/Button debounce in n milliseconds`
+    * **B8 (Delay)** `Keep output port open in n seconds`
 
 ---
 
