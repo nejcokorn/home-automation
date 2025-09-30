@@ -6,7 +6,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  RDPA ECxx  ODTT xxxxx PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+XXXX XXXX  RDPA Exxx  CMOD TTxx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
@@ -23,15 +23,16 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **P (Ping)**: `ACK = 0 & P = 1 => Ping device, ACK = 1 & P = 1 => Pong back`.
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
   * **E (Error)**: `1 = Error (response to a Command)`.
-  * **C (Config)**: `1 = Configure device`.
-  * **xx (Reserved)**: set to `0`.
+  * **xxx (Reserved)**: set to `0`.
 
 * **B3 DataCtrl (Data Control)** — bit-coded:
 
+  * **C (Config)**: `1 = Configure device`.
+  * **M (EPROM)**: `1 = Save configuration to EPROM`.
   * **O (Operation)**: `0 = Read`, `1 = Write`.
   * **D (Data source/Direction)**: `0 = Output ports`, `1 = Input ports`.
   * **T (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
-  * **xxxxx (Reserved)**: set to `0`.
+  * **xx (Reserved)**: set to `0`.
 
 * **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 
@@ -53,7 +54,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 ## 3. Data Class and Port Semantics
 
-### 3.1 Manage multiple ports (B3-O/D/T)
+### 3.1 Manage multiple ports (B3-C/M/O/D/T)
 
 * **Read, Port = 0**: returns a **bitmap** of all digital input/output port states in `Data` (bit 0 → port 1, …).
 * **Read, Port = k (1–255)**: returns state of port *k* in `Data bit0` (`0/1`).
@@ -71,10 +72,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 On processing failure, the Acknowledge frame (`A=1, E=1`) carries an error code in **Data**:
 
-| Code | Meaning |
-| ---- | ------- |
-
-TBD - To be decided
+| Code | Meaning       |
+| ---- | ------------- |
+| TBD  | To be decided |
 
 ---
 
@@ -85,8 +85,8 @@ TBD - To be decided
 ```
 CAN ID = 0x2FF
 From = <requester>
-CommCtrl: R=1 D=1 P=0 A=0 E=0 C=0
-DataCtrl: O=0 D=0 T=00
+CommCtrl: R=1 D=1 P=0 A=0 E=0
+DataCtrl: C=0 M=0 O=0 D=0 T=00
 Port = 0
 Data = 0x00000000
 ```
@@ -96,8 +96,8 @@ Data = 0x00000000
 ```
 CAN ID = 0x200 + <deviceID>
 From = <deviceID>
-CommCtrl: R=0 D=1 P=0 A=1 E=0 C=0
-DataCtrl: O=0 D=1 T=01
+CommCtrl: R=0 D=1 P=0 A=1 E=0
+DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port = 0
 Data = <version/capability information>
 ```
@@ -109,8 +109,8 @@ Data = <version/capability information>
 | Byte | Name     | Description                          |
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
-| B2   | CommCtrl | Bit-coded: `R D P A E C xx`          |
-| B3   | DataCtrl | Bit-coded: `O D TT xxxxx`            |
+| B2   | CommCtrl | Bit-coded: `R D P A E 0xxx`          |
+| B3   | DataCtrl | Bit-coded: `C M O D TT xx`           |
 | B4   | Port     | `0` = all ports, `1–255` = port ID   |
 | B5   | Data MSB | Data payload, most significant byte  |
 | B6   | Data     | Data payload                         |
@@ -121,13 +121,15 @@ Data = <version/capability information>
 
 ## 7. Examples
 
+*(Prilagoditve samo za nove oznake C/M/O/D/T)*
+
 ### 7.1 Write to a specific port (bit) — Port 5 = ON
 
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0 C=0
-DataCtrl: O=1 D=0 T=00
+CommCtrl: R=1 D=0 P=0 A=0 E=0
+DataCtrl: C=0 M=0 O=1 D=0 T=00
 Port=5
 Data=0x00000001
 ```
@@ -137,8 +139,8 @@ Data=0x00000001
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=0 A=1 E=0 C=0
-DataCtrl: O=1 D=0 T=00
+CommCtrl: R=1 D=0 P=0 A=1 E=0
+DataCtrl: C=0 M=0 O=1 D=0 T=00
 Port=5
 Data=0x00000001
 ```
@@ -150,8 +152,8 @@ Data=0x00000001
 ```
 CAN ID   = 0x212
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0 C=0
-DataCtrl: O=1 D=0 T=00
+CommCtrl: R=1 D=0 P=0 A=0 E=0
+DataCtrl: C=0 M=0 O=1 D=0 T=00
 Port=0
 Data=0x000000F3
 ```
@@ -163,8 +165,8 @@ Data=0x000000F3
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0 C=0
-DataCtrl: O=0 D=1 T=01
+CommCtrl: R=1 D=0 P=0 A=0 E=0
+DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=3
 Data=0x00000000
 ```
@@ -174,8 +176,8 @@ Data=0x00000000
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=0 A=1 E=0 C=0
-DataCtrl: O=0 D=1 T=01
+CommCtrl: R=1 D=0 P=0 A=1 E=0
+DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=3
 Data=0x000000F2
 ```
@@ -187,8 +189,8 @@ Data=0x000000F2
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0 C=0
-DataCtrl: O=0 D=1 T=01
+CommCtrl: R=1 D=0 P=0 A=0 E=0
+DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=0
 Data=0x00000000
 ```
@@ -198,8 +200,8 @@ Data=0x00000000
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=0 A=1 E=1 C=0
-DataCtrl: O=0 D=1 T=01
+CommCtrl: R=1 D=0 P=0 A=1 E=1
+DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=0
 Data=0x00000002
 ```
@@ -213,8 +215,8 @@ Data=0x00000002
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=1 A=0 E=0 C=0
-DataCtrl: O=0 D=0 T=00
+CommCtrl: R=1 D=0 P=1 A=0 E=0
+DataCtrl: C=0 M=0 O=0 D=0 T=00
 Port=0
 Data=0x00000000
 ```
@@ -224,8 +226,8 @@ Data=0x00000000
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=1 A=1 E=0 C=0
-DataCtrl: O=0 D=0 T=00
+CommCtrl: R=1 D=0 P=1 A=1 E=0
+DataCtrl: C=0 M=0 O=0 D=0 T=00
 Port=0
 Data=0x00000000
 ```
