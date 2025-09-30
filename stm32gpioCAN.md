@@ -6,7 +6,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  RDPA Exxx  CMOD TTxx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+XXXX XXXX  CDPA Exxx  CMOD TTxx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
@@ -18,7 +18,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 * **B2 CommCtrl (Communication Control)** — bit-coded:
 
-  * **R (Frame Role)**: `0 = Data push event`, `1 = Command`.
+  * **C (Message Type)**: `0 = Data push event`, `1 = Command`.
   * **D (Discovery)**: `1 = Discover other devices on the network`.
   * **P (Ping)**: `ACK = 0 & P = 1 => Ping device, ACK = 1 & P = 1 => Pong back`.
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
@@ -42,13 +42,13 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 ## 2. Communication Rules
 
-1. **Command** frames (`R=1`) require an **Acknowledge** response (`A=1`), or an **Error** response (`E=1`) with mirrored `CommCtrl/DataCtrl` fields and resulting `Data`.
-2. **Push** frames (`R=0`) are asynchronous and do not require acknowledgement.
+1. **Command** frames (`C=1`) require an **Acknowledge** response (`A=1`), or an **Error** response (`E=1`) with mirrored `CommCtrl/DataCtrl` fields and resulting `Data`.
+2. **Push** frames (`C=0`) are asynchronous and do not require acknowledgement.
 3. **Broadcast** is achieved by sending the frame with a broadcast CAN ID (`0x2FF`). Discovery requests are broadcast; discovery responses are unicast.
 4. **Ping/Pong**:
 
-   * `R=1, P=1, A=0` → Ping request.
-   * `R=1, P=1, A=1` → Pong response (same CommCtrl mirrored).
+   * `C=1, P=1, A=0` → Ping request.
+   * `C=1, P=1, A=1` → Pong response (same CommCtrl mirrored).
 
 ---
 
@@ -85,7 +85,7 @@ On processing failure, the Acknowledge frame (`A=1, E=1`) carries an error code 
 ```
 CAN ID = 0x2FF
 From = <requester>
-CommCtrl: R=1 D=1 P=0 A=0 E=0
+CommCtrl: C=1 D=1 P=0 A=0 E=0
 DataCtrl: C=0 M=0 O=0 D=0 T=00
 Port = 0
 Data = 0x00000000
@@ -96,7 +96,7 @@ Data = 0x00000000
 ```
 CAN ID = 0x200 + <deviceID>
 From = <deviceID>
-CommCtrl: R=0 D=1 P=0 A=1 E=0
+CommCtrl: C=0 D=1 P=0 A=1 E=0
 DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port = 0
 Data = <version/capability information>
@@ -109,7 +109,7 @@ Data = <version/capability information>
 | Byte | Name     | Description                          |
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
-| B2   | CommCtrl | Bit-coded: `R D P A E xxx`          |
+| B2   | CommCtrl | Bit-coded: `C D P A E xxx`           |
 | B3   | DataCtrl | Bit-coded: `C M O D TT xx`           |
 | B4   | Port     | `0` = all ports, `1–255` = port ID   |
 | B5   | Data MSB | Data payload, most significant byte  |
@@ -128,7 +128,7 @@ Data = <version/capability information>
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0
+CommCtrl: C=1 D=0 P=0 A=0 E=0
 DataCtrl: C=0 M=0 O=1 D=0 T=00
 Port=5
 Data=0x00000001
@@ -139,7 +139,7 @@ Data=0x00000001
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=0 A=1 E=0
+CommCtrl: C=1 D=0 P=0 A=1 E=0
 DataCtrl: C=0 M=0 O=1 D=0 T=00
 Port=5
 Data=0x00000001
@@ -152,7 +152,7 @@ Data=0x00000001
 ```
 CAN ID   = 0x212
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0
+CommCtrl: C=1 D=0 P=0 A=0 E=0
 DataCtrl: C=0 M=0 O=1 D=0 T=00
 Port=0
 Data=0x000000F3
@@ -165,7 +165,7 @@ Data=0x000000F3
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0
+CommCtrl: C=1 D=0 P=0 A=0 E=0
 DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=3
 Data=0x00000000
@@ -176,7 +176,7 @@ Data=0x00000000
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=0 A=1 E=0
+CommCtrl: C=1 D=0 P=0 A=1 E=0
 DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=3
 Data=0x000000F2
@@ -189,7 +189,7 @@ Data=0x000000F2
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=0 A=0 E=0
+CommCtrl: C=1 D=0 P=0 A=0 E=0
 DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=0
 Data=0x00000000
@@ -200,7 +200,7 @@ Data=0x00000000
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=0 A=1 E=1
+CommCtrl: C=1 D=0 P=0 A=1 E=1
 DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port=0
 Data=0x00000002
@@ -215,7 +215,7 @@ Data=0x00000002
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
 From=0x01
-CommCtrl: R=1 D=0 P=1 A=0 E=0
+CommCtrl: C=1 D=0 P=1 A=0 E=0
 DataCtrl: C=0 M=0 O=0 D=0 T=00
 Port=0
 Data=0x00000000
@@ -226,7 +226,7 @@ Data=0x00000000
 ```
 CAN ID = 0x201   (receiver = requester 0x01)
 From=0x12
-CommCtrl: R=1 D=0 P=1 A=1 E=0
+CommCtrl: C=1 D=0 P=1 A=1 E=0
 DataCtrl: C=0 M=0 O=0 D=0 T=00
 Port=0
 Data=0x00000000
