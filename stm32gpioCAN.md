@@ -109,7 +109,7 @@ Data = <version/capability information>
 | Byte | Name     | Description                          |
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
-| B2   | CommCtrl | Bit-coded: `R D P A E 0xxx`          |
+| B2   | CommCtrl | Bit-coded: `R D P A E xxx`          |
 | B3   | DataCtrl | Bit-coded: `C M O D TT xx`           |
 | B4   | Port     | `0` = all ports, `1–255` = port ID   |
 | B5   | Data MSB | Data payload, most significant byte  |
