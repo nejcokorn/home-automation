@@ -44,12 +44,13 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * **I (Bypass Instantly)**: `1 = Bypass instantly without checking for conditions`.
       * **B (Bypass On Disconnect)**: `1 = Bypass when connection has been lost`.
       * **D (Bypass On DIP switch)**: `1 = Bypass is determined by the DIP switch`.
-      * **xx (Reserved)**: set to `0`.
-      * **OO (Options)**: Values for each option are present in B6, B7, B8
-        * `00 = Reset all options to 0`.
-        * `01 = Target output ports`.
-        * `10 = Debounce in microseconds`.
-        * `11 = Delay off in milliseconds`.
+      * **x (Reserved)**: set to `0`.
+      * **OOO (Options)**: Values for each option are present in B6, B7, B8
+        * `000 = No changes to the options`.
+        * `001 = Target output ports`.
+        * `010 = Debounce in microseconds`.
+        * `011 = Delay off in milliseconds`.
+        * `111 = Reset all options (value 0)`.
     * **B6..B8 Data**: 24-bit payload, **MSB first** (B6), then LSB (B8).
 
 ---
