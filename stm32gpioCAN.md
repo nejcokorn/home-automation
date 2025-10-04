@@ -127,7 +127,7 @@ From = <deviceID>
 CommCtrl: C=0 D=1 P=0 A=1 E=0
 DataCtrl: C=0 M=0 O=0 D=1 T=01
 Port = 0
-Data = <version/capability information>
+Data = <firmware>
 ```
 
 ---
@@ -149,9 +149,7 @@ Data = <version/capability information>
 
 ## 8. Examples
 
-*(Prilagoditve samo za nove oznake C/M/O/D/T)*
-
-### 7.1 Write to a specific port (bit) — Port 5 = ON
+### 8.1 Write to a specific port (bit) — Port 5 = ON
 
 ```
 CAN ID = 0x212   (receiver device ID = 0x12)
