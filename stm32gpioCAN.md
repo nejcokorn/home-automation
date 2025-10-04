@@ -48,8 +48,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
         * `000 = No changes to the options`.
         * `001 = Target output ports`.
         * `010 = Debounce in microseconds`.
-        * `011 = Delay off in milliseconds`.
-        * `100 = Bypass on disconnect in milliseconds`.
+        * `011 = Delay on in milliseconds - Longpress`.
+        * `100 = Delay off in milliseconds`.
+        * `101 = Bypass on disconnect in milliseconds`.
         * `111 = Reset all options (value 0)`.
     * **B6..B8 Data**: 24-bit payload, **MSB first** (B6), then LSB (B8).
 
