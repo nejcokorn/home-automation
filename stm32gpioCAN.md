@@ -20,7 +20,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
   * **C (Message Type)**: `0 = Data push event`, `1 = Command`.
   * **D (Discovery)**: `1 = Discover other devices on the network`.
+    * Only reply to the broadcast address
   * **P (Ping)**: `ACK = 0 & P = 1 => Ping device, ACK = 1 & P = 1 => Pong back`.
+    * Only reply to the broadcast/deviceId address
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
   * **E (Error)**: `1 = Error (response to a Command)`.
   * **xxx (Reserved)**: set to `0`.
