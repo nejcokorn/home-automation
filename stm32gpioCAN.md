@@ -38,23 +38,24 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 * **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 
-* **When C=0 (Config)**:
-  * **B5..B8 Data**: 32-bit payload, **MSB first** (B5), then LSB (B8).
-* **When C=1 (Config)**:
-    * **B5 ConfigCtrl**:
-      * **T (Input Type)**: `1 = Input acts as Button, 0 = Input acts as Switch`.
-      * **I (Bypass Instantly)**: `1 = Bypass instantly without checking for conditions`.
-      * **D (Bypass On DIP switch)**: `1 = Bypass is determined by the DIP switch`.
-      * **xx (Reserved)**: set to `0`.
-      * **OOO (Options)**: Values for each option are present in B6, B7, B8
-        * `000 = No changes to the options`.
-        * `001 = Target output ports`.
-        * `010 = Debounce in microseconds`.
-        * `011 = Delay on in milliseconds - Longpress`.
-        * `100 = Delay off in milliseconds`.
-        * `101 = Bypass on disconnect in milliseconds`.
-        * `111 = Reset all options (value 0)`.
-    * **B6..B8 Data**: 24-bit payload, **MSB first** (B6), then LSB (B8).
+* **B5 Data/ConfigCtrl**
+  * **When C=0 (No configuration)**:
+    * 32-bit payload, **B5..B8 Data, MSB first**.
+  * **When C=1 (Config)**:
+    * **T (Input Type)**: `1 = Input acts as Button, 0 = Input acts as Switch`.
+    * **I (Bypass Instantly)**: `1 = Bypass instantly without checking for conditions`.
+    * **D (Bypass On DIP switch)**: `1 = Bypass is determined by the DIP switch`.
+    * **xx (Reserved)**: set to `0`.
+    * **OOO (Options)**: Values for each option are present in B6, B7, B8
+      * `000 = No changes to the options`.
+      * `001 = Target output ports`.
+      * `010 = Debounce in microseconds`.
+      * `011 = Delay on in milliseconds - Longpress`.
+      * `100 = Delay off in milliseconds`.
+      * `101 = Bypass on disconnect in milliseconds`.
+      * `111 = Reset all options (value 0)`.
+
+* **B6..B8 Data**: 24/32-bit payload, **MSB first**.
 
 ---
 
