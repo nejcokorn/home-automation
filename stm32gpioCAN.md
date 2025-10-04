@@ -31,6 +31,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **M (EEPROM)**: `1 = Save configuration to EEPROM`.
   * **O (Operation)**: `0 = Read`, `1 = Write`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
+    * D = 0, P != 0, data bytes B5..B8 represent delay off in miliseconds.
   * **TT (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
   * **xx (Reserved)**: set to `0`.
 
