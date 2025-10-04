@@ -29,15 +29,16 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
   * **C (Config)**: `1 = Configure device`.
   * **M (EEPROM)**: `1 = Save configuration to EEPROM`.
+    * Data bytes B5..B8 are set to 0.
   * **O (Operation)**: `0 = Read`, `1 = Write`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
-    * D = 0, P != 0, data bytes B5..B8 represent delay off in miliseconds.
+    * `D = 0, B4 != 0` => data bytes B5..B8 represent delay off in miliseconds.
   * **TT (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
   * **xx (Reserved)**: set to `0`.
 
 * **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 
-* **When C=0 (Config) & M=0(Save configuration to EEPROM)**:
+* **When C=0 (Config)**:
   * **B5..B8 Data**: 32-bit payload, **MSB first** (B5), then LSB (B8).
 * **When C=1 (Config)**:
     * **B5 ConfigCtrl**:
