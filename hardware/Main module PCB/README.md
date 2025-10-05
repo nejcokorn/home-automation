@@ -1,7 +1,7 @@
 # Main Module PCB (r1.0)
 
 **Supply:** 24 VDC (21.6–26.4 V) • **MCU:** STM32F103RCT6 • **Logic:** 3.3 V  
-**Purpose:** Central controller with **isolated digital inputs**, backplane **module connectors**, and headers for **programming** and **communication modules** (e.g., CAN). Supports expansion **output modules** (currently **Relay module**; future: **PWM LED output** for LED strips).
+**Purpose:** Central controller with **isolated digital inputs**, headers for **programming**, **communication modules** (e.g., CAN). Supports expansion, **output modules** (currently **Relay module**; future: **PWM LED output** for LED strips).
 
 ---
 
@@ -32,50 +32,17 @@
 | Input debounce | **Software debounce** in firmware |
 | Protection | TVS on 24 V, proper decoupling on 3.3 V (see schematic) |
 
-> Note: Place adequate bulk capacitance on 24 V line close to the buck; follow layout guidelines for **LMR51430** (short switch node, solid ground).
-
----
-
-## Connectors (overview)
-*(Exact part numbers and pinouts are documented in the schematic PDFs – list here is for navigation.)*
-
-- **Jx – Module connectors (backplane)**: power + I/O bus to daughter boards  
-- **J_SW** – **SWD** programming header (SWDIO, SWCLK, 3V3, GND, NRST)  
-- **J_COMM** – **Communication module** header (for **CAN module**; power, CAN, control)  
-- **J_OUT** – **Output expansion** header (for **Relay module**; power + control bus)  
-- **J_IN*** – Terminal blocks for **16× isolated inputs** (naming JIN1…JIN16)  
-- **BTN_RST** – **Reset button**  
-- **SW_DIP** – **DIP switches** for **mode/address** configuration
-
-> Add detailed pin tables per connector in this README when finalized (see template below).
-
 ---
 
 ## DIP switch configuration
-Typical use cases (examples; align with firmware):
-- **Address / Node ID** selection  
-- **Operating mode** (e.g., I/O mapping profile, debounce time preset)  
-Document final mapping in firmware and mirror it here.
+
+Use the DIP switches to select the **operating mode** of the module:
+
+- **Slave mode** — the module acts as a **slave**; a **Raspberry Pi** (master) handles communication and logic.
+- **Stand-alone mode** — the module runs **without** a Raspberry Pi; e.g., **Input 1** directly triggers **Output 1** (1:1 mapping).
+- **Blinds mode** — dedicated logic for blinds (UP/DOWN/STOP, interlock between directions, timing safeguards).
+- **Push buttons → lights** — for **momentary push buttons**; supports **toggle**, **long-press**, **double-click** behaviors.
+- **Switch mode (latching switches → lights)** — for **latching switches**; the switch state directly controls the output state.
+
 
 ---
-
-## Firmware notes
-- Target: **STM32F103RCT6** (HAL/CMSIS).  
-- **Clocking:** HSE **8 MHz** → PLL per project.  
-- **Input handling:** edge detection with **software debounce** (tunable).  
-- **Supervisor:** handle **TLV809** reset line; ensure clean startup sequence.  
-- **Boot/Debug:** **SWD**; optional UART log for bring-up.
-
----
-
-## Bring-up / test procedure
-1. **Visual inspection** (orientation, polarity, solder bridges).  
-2. Power from **current-limited** 24 V supply (limit ≤ 0.3 A first). Verify **3.3 V**.  
-3. Check **reset supervisor** action (hold below 3.0 V → reset asserted).  
-4. Program MCU over **SWD**; confirm heartbeat LED (if available).  
-5. Exercise **inputs** (simulate via 24 V sources) and observe debounced states.  
-6. Connect **Relay module** and **CAN module** (if present) and run I/O smoke test.
-
----
-
-## Files in this folder
