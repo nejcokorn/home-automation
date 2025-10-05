@@ -53,8 +53,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * `001 = Target output ports on(switch), toggle(button)`.
       * `010 = Target output ports off(switch)`.
       * `011 = Debounce in microseconds`.
-      * `100 = Delay on in milliseconds - Longpress`.
+      * `100 = Longpress in milliseconds`.
       * `101 = Delay off in milliseconds`.
+        * `Longpress is the trigger for this action.`
       * `110 = Bypass on disconnect in milliseconds`.
       * `111 = Reset all options (value 0)`.
 
