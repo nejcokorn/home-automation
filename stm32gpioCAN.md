@@ -47,17 +47,18 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * **T (Input Type)**: `1 = Input acts as Button, 0 = Input acts as Switch`.
     * **I (Bypass Instantly)**: `1 = Bypass instantly without checking for conditions`.
     * **D (Bypass On DIP switch)**: `1 = Bypass is determined by the DIP switch`.
-    * **xx (Reserved)**: set to `0`.
-    * **OOO (Options)**: Values for each option are present in B6, B7, B8
-      * `000 = No changes to the options`.
-      * `001 = Target output ports on(switch), toggle(button)`.
-      * `010 = Target output ports off(switch)`.
-      * `011 = Debounce in microseconds`.
-      * `100 = Longpress in milliseconds`.
-      * `101 = Delay off in milliseconds`.
+    * **x (Reserved)**: set to `0`.
+    * **OOOO (Options)**: Values for each option are present in B6, B7, B8
+      * `0000 = No changes to the options`.
+      * `0001 = Action toggle output pins`.
+      * `0010 = Action high output pins`.
+      * `0011 = Action low output pins`.
+      * `0100 = Debounce in microseconds`.
+      * `0101 = Longpress in milliseconds`.
+      * `0110 = Delay off in milliseconds`.
         * `Longpress is the trigger for this action.`
-      * `110 = Bypass on disconnect in milliseconds`.
-      * `111 = Reset all options (value 0)`.
+      * `0111 = Bypass on disconnect in milliseconds`.
+      * `1111 = Reset all options (set value 0)`.
 
 * **B6..B8 Data**: 24/32-bit payload, **MSB first**.
 
