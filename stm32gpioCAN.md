@@ -12,7 +12,8 @@ From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Dat
 
 ### 1.1 Frame Definitions
 
-The **receiver ID** is not included in the payload; it is encoded in the **CAN identifier field**, which ranges from **0x200 to 0x2FF** (8-bit logical receiver ID).
+The **receiver ID** is not included in the payload; it is encoded in the **CAN identifier field**, which ranges from **0x000 to 0x0FF** (8-bit logical receiver ID).  
+**Broadcast address** to address all devices is 0x7FF.
 
 * **B1 From**: 8-bit sender ID (`0x00–0xFF`).
 
