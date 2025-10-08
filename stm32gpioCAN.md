@@ -129,7 +129,7 @@ Data = 0x00000000
 ### 6.2 Response (per device, unicast)
 
 ```
-CAN ID = 0x200 + <deviceID>
+CAN ID = 0x000 + <deviceID>
 From = <deviceID>
 CommCtrl: C=0 D=1 P=0 A=1 E=0
 DataCtrl: C=0 M=0 O=0 D=1 T=01
