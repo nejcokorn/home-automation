@@ -60,7 +60,6 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * `01001 = Bypass Instantly`.
       * `01010 = Bypass determined by DIP switch`.
       * `01011 = Bypass on disconnect in milliseconds`.
-      * `11111 = Reset all options (set value 0)`.
 
 * **B6..B8 Data**: 24/32-bit payload, **MSB first**.
 
