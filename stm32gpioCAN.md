@@ -6,7 +6,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  CDPA Exxx  CMOD TTxx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+XXXX XXXX  CDPA Exxx  CMOS DTTx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
@@ -34,10 +34,11 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **M (EEPROM)**: `1 = Save configuration to EEPROM`.
     * Data bytes B5..B8 are set to 0.
   * **O (Operation)**: `0 = Read`, `1 = Write`.
+  * **S (Signal)**: `0 = Digital`, `1 = Analog`,
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
     * `D = 0, B4 != 0` => data bytes B5..B8 represent delay off in miliseconds.
   * **TT (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
-  * **xx (Reserved)**: set to `0`.
+  * **x (Reserved)**: set to `0`.
 
 * **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 
@@ -144,7 +145,7 @@ Data = <firmware>
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
 | B2   | CommCtrl | Bit-coded: `C D P A E xxx`           |
-| B3   | DataCtrl | Bit-coded: `C M O D TT xx`           |
+| B3   | DataCtrl | Bit-coded: `C M O S D TT x`          |
 | B4   | Port     | `0` = all ports, `1–255` = port ID   |
 | B5   | Data MSB | Data payload, most significant byte  |
 | B6   | Data     | Data payload                         |
