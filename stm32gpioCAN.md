@@ -46,7 +46,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay off in miliseconds`.
     * `11 = Float`.
 
-* **B4 Port**: `0 = All ports`, `1–255 = specific port`.
+* **B4 Port**: `0–255 = port selection`.
 
 * **B5 Data/ConfigCtrl**
   * **When C=0 (No configuration)**:
@@ -92,23 +92,7 @@ The STM32GPIO device has two sets of DIP Switches on board:
 
 ---
 
-## 4. Data Class and Port Semantics
-
-### 4.1 Manage multiple ports (B3-C/M/O/D/T)
-
-* **Read, Port = 0**: returns a **bitmap** of all digital input/output port states in `Data` (bit 0 → port 1, …).
-* **Read, Port = k (1–255)**: returns state of port *k* in `Data bit0` (`0/1`).
-* **Write, Port = 0**: applies `Data` bitmap to all outputs.
-* **Write, Port = k**: applies `Data bit0` to port *k*.
-
-### 4.2 Byte (T=01)
-
-* **Port = 0**: **not permitted** (operation error).
-* **Read/Write, Port = k (1–255)**: transfers an 8-bit value in `Data`.
-
----
-
-## 5. Error Handling
+## 4. Error Handling
 
 On processing failure, the Acknowledge frame (`A=1, E=1`) carries an error code in **Data**:
 
@@ -118,9 +102,9 @@ On processing failure, the Acknowledge frame (`A=1, E=1`) carries an error code 
 
 ---
 
-## 6. Discovery
+## 5. Discovery
 
-### 6.1 Request (broadcast)
+### 5.1 Request (broadcast)
 
 ```
 CAN ID = 0x2FF
@@ -131,7 +115,7 @@ Port = 0
 Data = 0x00000000
 ```
 
-### 6.2 Response (per device, unicast)
+### 5.2 Response (per device, unicast)
 
 ```
 CAN ID = 0x000 + <deviceID>
@@ -144,14 +128,14 @@ Data = <firmware>
 
 ---
 
-## 7. Field Summary
+## 6. Field Summary
 
 | Byte | Name     | Description                          |
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
 | B2   | CommCtrl | Bit-coded: `C D P A E xxx`           |
 | B3   | DataCtrl | Bit-coded: `C M OO S D TT`           |
-| B4   | Port     | `0` = all ports, `1–255` = port ID   |
+| B4   | Port     | `0–255` = port ID                    |
 | B5   | Data MSB | Data payload, most significant byte  |
 | B6   | Data     | Data payload                         |
 | B7   | Data     | Data payload                         |
@@ -159,115 +143,5 @@ Data = <firmware>
 
 ---
 
-## 8. Examples
-
-### 8.1 Write to a specific port (bit) — Port 5 = ON
-
-```
-CAN ID = 0x212   (receiver device ID = 0x12)
-From=0x01
-CommCtrl: C=1 D=0 P=0 A=0 E=0
-DataCtrl: C=0 M=0 O=1 D=0 T=00
-Port=5
-Data=0x00000001
-```
-
-**Acknowledge**
-
-```
-CAN ID = 0x201   (receiver = requester 0x01)
-From=0x12
-CommCtrl: C=1 D=0 P=0 A=1 E=0
-DataCtrl: C=0 M=0 O=1 D=0 T=00
-Port=5
-Data=0x00000001
-```
-
----
-
-### 8.2 Write to all digital output ports (bit) — Global Bitmap
-
-```
-CAN ID   = 0x212
-From=0x01
-CommCtrl: C=1 D=0 P=0 A=0 E=0
-DataCtrl: C=0 M=0 O=1 D=0 T=00
-Port=0
-Data=0x000000F3
-```
-
----
-
-### 8.3 Read Byte (8-bit) — Port 3
-
-```
-CAN ID = 0x212   (receiver device ID = 0x12)
-From=0x01
-CommCtrl: C=1 D=0 P=0 A=0 E=0
-DataCtrl: C=0 M=0 O=0 D=1 T=01
-Port=3
-Data=0x00000000
-```
-
-**Acknowledge**
-
-```
-CAN ID = 0x201   (receiver = requester 0x01)
-From=0x12
-CommCtrl: C=1 D=0 P=0 A=1 E=0
-DataCtrl: C=0 M=0 O=0 D=1 T=01
-Port=3
-Data=0x000000F2
-```
-
----
-
-### 8.4 Invalid Operation — Read Byte with Port=0
-
-```
-CAN ID = 0x212   (receiver device ID = 0x12)
-From=0x01
-CommCtrl: C=1 D=0 P=0 A=0 E=0
-DataCtrl: C=0 M=0 O=0 D=1 T=01
-Port=0
-Data=0x00000000
-```
-
-**Acknowledge (error)**
-
-```
-CAN ID = 0x201   (receiver = requester 0x01)
-From=0x12
-CommCtrl: C=1 D=0 P=0 A=1 E=1
-DataCtrl: C=0 M=0 O=0 D=1 T=01
-Port=0
-Data=0x00000002
-```
-
----
-
-### 8.5 Ping/Pong Example
-
-**Ping request**
-
-```
-CAN ID = 0x212   (receiver device ID = 0x12)
-From=0x01
-CommCtrl: C=1 D=0 P=1 A=0 E=0
-DataCtrl: C=0 M=0 O=0 D=0 T=00
-Port=0
-Data=0x00000000
-```
-
-**Pong response**
-
-```
-CAN ID = 0x201   (receiver = requester 0x01)
-From=0x12
-CommCtrl: C=1 D=0 P=1 A=1 E=0
-DataCtrl: C=0 M=0 O=0 D=0 T=00
-Port=0
-Data=0x00000000
-```
-
----
+## 7. Examples
+TODO
