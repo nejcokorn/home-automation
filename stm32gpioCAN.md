@@ -6,7 +6,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  CDPA Exxx  CMOS DTTx  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+XXXX XXXX  CDPA Exxx  CMOO SDTT  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
@@ -21,9 +21,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
   * **C (Message Type)**: `0 = Data push event`, `1 = Command`.
   * **D (Discovery)**: `1 = Discover other devices on the network`.
-    * Only reply to the broadcast address
+    * Only reply to the broadcast address.
   * **P (Ping)**: `ACK = 0 & P = 1 => Ping device, ACK = 1 & P = 1 => Pong back`.
-    * Only reply to the broadcast/deviceId address
+    * Only reply to the broadcast/deviceId address.
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
   * **E (Error)**: `1 = Error (response to a Command)`.
   * **xxx (Reserved)**: set to `0`.
@@ -33,12 +33,18 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **C (Config)**: `1 = Configure device`.
   * **M (EEPROM)**: `1 = Save configuration to EEPROM`.
     * Data bytes B5..B8 are set to 0.
-  * **O (Operation)**: `0 = Read`, `1 = Write`.
-  * **S (Signal)**: `0 = Digital`, `1 = Analog`,
+  * **OO (Operation)**:
+    * `00 = Read`.
+    * `01 = Write`.
+    * `10 = Toggle`.
+    * `11 = Reserved`.
+  * **S (Signal)**: `0 = Digital`, `1 = Analog`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
-    * `D = 0, B4 != 0` => data bytes B5..B8 represent delay off in miliseconds.
-  * **TT (Type)**: `00 = Bit`, `01 = Byte (8-bit)`, `10 = Integer (32-bit)`, `11 = Float`.
-  * **x (Reserved)**: set to `0`.
+  * **TT (Type)**:
+    * `00 = Bit`.
+    * `01 = Byte (8-bit)`.
+    * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay off in miliseconds`.
+    * `11 = Float`.
 
 * **B4 Port**: `0 = All ports`, `1–255 = specific port`.
 
@@ -46,23 +52,22 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **When C=0 (No configuration)**:
     * 32-bit payload, **B5..B8 Data, MSB first**.
   * **When C=1 (Config)**:
-    * **xxx (Reserved)**: set to `0`.
-    * **OOOOO (Options)**: Values for each option are present in B6, B7, B8
-      * `00000 = Input acts as a Button on rising edge`.
-      * `00001 = Input acts as a Button on falling edge`.
-      * `00010 = Input acts as Switch`.
-      * `00011 = Action toggle output pins`.
-      * `00100 = Action high output pins`.
-      * `00101 = Action low output pins`.
-      * `00110 = Debounce in microseconds`.
-      * `00111 = Longpress in milliseconds`.
-      * `01000 = Delay off in milliseconds`.
+    * **B5 (Options)**: Values for each option are present in B6, B7, B8
+      * `00000 = Input acts as a Button on rising edge`
+      * `00001 = Input acts as a Button on falling edge`
+      * `00010 = Input acts as Switch`
+      * `00011 = Action toggle output pins`
+      * `00100 = Action high output pins`
+      * `00101 = Action low output pins`
+      * `00110 = Debounce in microseconds`
+      * `00111 = Longpress in milliseconds`
+      * `01000 = Delay off in milliseconds`
         * `Longpress is the trigger for this action.`
-      * `01001 = Bypass Instantly`.
-      * `01010 = Bypass determined by DIP switch`.
-      * `01011 = Bypass on disconnect in milliseconds`.
+      * `01001 = Bypass Instantly`
+      * `01010 = Bypass determined by DIP switch`
+      * `01011 = Bypass on disconnect in milliseconds`
 
-* **B6..B8 Data**: 24/32-bit payload, **MSB first**.
+* **B6..B8 Data**: 24/32-bit payload, **MSB first**
 
 ---
 
@@ -145,7 +150,7 @@ Data = <firmware>
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
 | B2   | CommCtrl | Bit-coded: `C D P A E xxx`           |
-| B3   | DataCtrl | Bit-coded: `C M O S D TT x`          |
+| B3   | DataCtrl | Bit-coded: `C M OO S D TT`           |
 | B4   | Port     | `0` = all ports, `1–255` = port ID   |
 | B5   | Data MSB | Data payload, most significant byte  |
 | B6   | Data     | Data payload                         |
