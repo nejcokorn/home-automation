@@ -1,4 +1,4 @@
-# Main Module PCB (r1.0)
+# Main Module PCB (r2.0)
 
 **Supply:** 24 VDC (21.6–26.4 V) • **MCU:** STM32F103RCT6 • **Logic:** 3.3 V  
 **Purpose:** Central controller with **isolated digital inputs**, headers for **programming**, **communication modules** (e.g., CAN). Supports expansion, **output modules** (currently **Relay module**; future: **PWM LED output** for LED strips).
