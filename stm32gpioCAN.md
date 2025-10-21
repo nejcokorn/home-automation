@@ -6,7 +6,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  CDPA Exxx  CMOO SDTT  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+XXXX XXXX  CDPA WExx  CMOO SDTT  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
@@ -25,6 +25,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **P (Ping)**: `ACK = 0 & P = 1 => Ping device, ACK = 1 & P = 1 => Pong back`.
     * Only reply to the broadcast/deviceId address.
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
+  * **W (Wait)**: `1 = Wait for next frame`.
   * **E (Error)**: `1 = Error (response to a Command)`.
   * **xxx (Reserved)**: set to `0`.
 
@@ -133,7 +134,7 @@ Data = <firmware>
 | Byte | Name     | Description                          |
 | ---- | -------- | ------------------------------------ |
 | B1   | From     | Sender ID (`0x00–0xFF`)              |
-| B2   | CommCtrl | Bit-coded: `C D P A E xxx`           |
+| B2   | CommCtrl | Bit-coded: `C D P A W E xx`          |
 | B3   | DataCtrl | Bit-coded: `C M OO S D TT`           |
 | B4   | Port     | `0–255` = port ID                    |
 | B5   | Data MSB | Data payload, most significant byte  |
