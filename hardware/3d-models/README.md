@@ -6,4 +6,4 @@ This folder contains **3D files** for the I/O module in **.STL** or **.STEP** fo
 - Enclosure
 - PDFs
 
-> [To open 3D PDFs, you must use Adobe Acrobat Reader and enable 3D viewing.]
+> To open 3D PDFs, you must use Adobe Acrobat Reader and enable 3D viewing.
