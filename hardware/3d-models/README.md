@@ -4,3 +4,4 @@ This folder contains **3D files** for the I/O module in **.STL** or **.STEP** fo
 
 - PCB
 - Enclosure
+- PDFs
