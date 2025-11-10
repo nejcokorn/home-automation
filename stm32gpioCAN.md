@@ -44,7 +44,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **TT (Type)**:
     * `00 = Bit`.
     * `01 = Byte (8-bit)`.
-    * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay off in miliseconds`.
+    * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay low in miliseconds`.
     * `11 = Float`.
 
 * **B4 Port**: `0–255 = port selection`.
@@ -63,7 +63,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * `00110 = Action low output pins`
       * `00111 = Debounce in microseconds`
       * `01000 = Longpress in milliseconds`
-      * `01001 = Delay off in milliseconds`
+      * `01001 = Delay low in milliseconds`
         * `Longpress is the trigger for this action.`
       * `01010 = Bypass Instantly`
       * `01011 = Bypass determined by DIP switch`
