@@ -27,7 +27,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
   * **W (Wait)**: `1 = Wait for next frame`.
   * **E (Error)**: `1 = Error (response to a Command)`.
-  * **xxx (Reserved)**: set to `0`.
+  * **xx (Reserved)**: set to `0`.
 
 * **B3 DataCtrl (Data Control)** — bit-coded:
 
