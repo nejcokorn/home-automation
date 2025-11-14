@@ -57,17 +57,23 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * `00000 = Input acts as a Button on rising edge`
       * `00001 = Input acts as a Button on falling edge`
       * `00010 = Input acts as Switch`
-      * `00011 = Get/Reset all actions`
-      * `00100 = Action toggle output pins`
-      * `00101 = Action high output pins`
-      * `00110 = Action low output pins`
-      * `00111 = Debounce in microseconds`
-      * `01000 = Longpress in milliseconds`
-      * `01001 = Delay low in milliseconds`
-        * `Longpress is the trigger for this action.`
-      * `01010 = Bypass Instantly`
-      * `01011 = Bypass determined by DIP switch`
-      * `01100 = Bypass on disconnect in milliseconds`
+      * `00011 = Debounce in microseconds`
+      * `00100 = Longpress in milliseconds`
+      * `00101 = Double-click in milliseconds`
+      * `00110 = Delay in milliseconds`
+      * `00111 = Get/Reset all actions`
+      * `01000 = Action toggle output pins`
+      * `01001 = Action high output pins`
+      * `01010 = Action low output pins`
+      * `01011 = Action longpress toggle output pins`
+      * `01100 = Action longpress high output pins`
+      * `01101 = Action longpress low output pins`
+      * `01110 = Action double-click toggle output pins`
+      * `01111 = Action double-click high output pins`
+      * `10000 = Action double-click low output pins`
+      * `10001 = Bypass Instantly`
+      * `10010 = Bypass determined by DIP switch`
+      * `10011 = Bypass on disconnect in milliseconds`
 
 * **B6..B8 Data**: 24/32-bit payload, **MSB first**
 
