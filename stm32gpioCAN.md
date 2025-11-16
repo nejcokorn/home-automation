@@ -31,14 +31,12 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 * **B3 DataCtrl (Data Control)** — bit-coded:
 
-  * **C (Config)**: `1 = Configure device`.
-  * **M (EEPROM)**: `1 = Save configuration to EEPROM`.
-    * Data bytes B5..B8 are set to 0.
-  * **OO (Operation)**:
-    * `00 = Read`.
-    * `01 = Write`.
-    * `10 = Toggle`.
-    * `11 = Reserved`.
+  * **C (Config)**: `0 = Data package`.
+  * **OOO (Operation)**:
+    * `000 = Read`.
+    * `001 = Write`.
+    * `010 = Toggle`.
+    * `011...111 = Reserved`.
   * **S (Signal)**: `0 = Digital`, `1 = Analog`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
   * **TT (Type)**:
@@ -47,35 +45,36 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay low in miliseconds`.
     * `11 = Float`.
 
+* **B3 ConfigCtrl (Config Control)** — bit-coded:
+
+  * **C (Config)**: `1 = Configuration package`.
+  * **W (Write)**: `0 = Read, 1 = Write`.
+  * **O (Options)**: Values for each option are present in B5..B8
+      * `00000 = Save configuration to EEPROM`
+      * `00001 = Input acts as a Button on rising edge`
+      * `00010 = Input acts as a Button on falling edge`
+      * `00011 = Input acts as Switch`
+      * `00100 = Debounce in microseconds`
+      * `00101 = Longpress in milliseconds`
+      * `00110 = Double-click in milliseconds`
+      * `00111 = Delay in milliseconds`
+      * `01000 = Get/Reset all actions`
+      * `01001 = Action toggle output pins`
+      * `01010 = Action high output pins`
+      * `01011 = Action low output pins`
+      * `01100 = Action longpress toggle output pins`
+      * `01101 = Action longpress high output pins`
+      * `01110 = Action longpress low output pins`
+      * `01111 = Action double-click toggle output pins`
+      * `10000 = Action double-click high output pins`
+      * `10001 = Action double-click low output pins`
+      * `10010 = Bypass Instantly`
+      * `10011 = Bypass determined by DIP switch`
+      * `10100 = Bypass on disconnect in milliseconds`
+
 * **B4 Port**: `0–255 = port selection`.
 
-* **B5 Data/ConfigCtrl**
-  * **When C=0 (No configuration)**:
-    * 32-bit payload, **B5..B8 Data, MSB first**.
-  * **When C=1 (Config)**:
-    * **B5 (Options)**: Values for each option are present in B6, B7, B8
-      * `00000 = Input acts as a Button on rising edge`
-      * `00001 = Input acts as a Button on falling edge`
-      * `00010 = Input acts as Switch`
-      * `00011 = Debounce in microseconds`
-      * `00100 = Longpress in milliseconds`
-      * `00101 = Double-click in milliseconds`
-      * `00110 = Delay in milliseconds`
-      * `00111 = Get/Reset all actions`
-      * `01000 = Action toggle output pins`
-      * `01001 = Action high output pins`
-      * `01010 = Action low output pins`
-      * `01011 = Action longpress toggle output pins`
-      * `01100 = Action longpress high output pins`
-      * `01101 = Action longpress low output pins`
-      * `01110 = Action double-click toggle output pins`
-      * `01111 = Action double-click high output pins`
-      * `10000 = Action double-click low output pins`
-      * `10001 = Bypass Instantly`
-      * `10010 = Bypass determined by DIP switch`
-      * `10011 = Bypass on disconnect in milliseconds`
-
-* **B6..B8 Data**: 24/32-bit payload, **MSB first**
+* **B5..B8 Data**: 32-bit payload, **MSB first**
 
 ---
 
