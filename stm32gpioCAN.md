@@ -34,9 +34,22 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **C (Config)**: `0 = Data package`.
   * **OOO (Operation)**:
     * `000 = Read`.
+      * Read the current state of the input/output ports
     * `001 = Write`.
-    * `010 = Toggle`.
-    * `011...111 = Reserved`.
+      * Write the desired state to the output ports.
+        * 0 = LOW
+        * 1 = HIGH
+        * 2 = TOGGLE
+        * 3 = PWM
+    * `010 = Extra value`.
+      * PWM duty cycle
+    * `011 = Delay in milliseconds`.
+    * `100 = List all delays`.
+      * Returned information is retrieved in multiple packages. Until the last package is sent, include a wait bit.
+        * 1st = package with the desired future state, 0 = LOW, 1 = HIGH, 2 = TOGGLE, 3 = PWM
+        * 2nd = extra value (optional - PWM)
+        * 3rd = delay
+    * `110...111 = Reserved`.
   * **S (Signal)**: `0 = Digital`, `1 = Analog`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
   * **TT (Type)**:
