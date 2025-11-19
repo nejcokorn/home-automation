@@ -33,16 +33,16 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
   * **C (Config)**: `0 = Data package`.
   * **OOO (Operation)**:
-    * `000 = Read`.
-      * Read the current state of the input/output ports
-    * `001 = Write`.
-      * Write the desired state to the output ports.
-        * 0 = LOW
-        * 1 = HIGH
-        * 2 = TOGGLE
-        * 3 = PWM
+    * `000 = Get`.
+      * Get the current state of the input/output ports
+    * `001 = Set`.
+      * Set the desired state to the output ports.
+        * 0 = low
+        * 1 = high
+        * 2 = toggle
+        * 3 = pwm
     * `010 = Extra value`.
-      * PWM duty cycle
+      * pwm duty cycle
     * `011 = Delay in milliseconds`.
     * `100 = List all delays`.
       * Returned information is retrieved in multiple packages. Until the last package is sent, include a wait bit.
@@ -61,8 +61,8 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 * **B3 ConfigCtrl (Config Control)** — bit-coded:
 
   * **C (Config)**: `1 = Configuration package`.
-  * **W (Write)**: `0 = Read, 1 = Write`.
-  * **O (Options)**: Values for each option are present in B5..B8
+  * **0 (Operation)**: `0 = Get, 1 = Set`.
+  * **S (Settings/Options)**: Values for each option are present in B5..B8
       * `00000 = Save configuration to EEPROM`
       * `00001 = Input acts as a Button on rising edge`
       * `00010 = Input acts as a Button on falling edge`
