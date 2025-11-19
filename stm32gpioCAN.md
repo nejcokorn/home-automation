@@ -33,7 +33,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
   * **C (Config)**: `0 = Data package`.
   * **OOO (Operation)**:
-    * `000 = Get`.
+    * `000 = Get/Push`.
       * Get the current state of the input/output ports
     * `001 = Set`.
       * Set the desired state to the output ports.
