@@ -71,9 +71,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * `00101 = Double-click in milliseconds`
       * `00110 = Delay in milliseconds`
       * `00111 = Get/Reset all actions`
-      * `01000 = Action toggle output pins`
-      * `01001 = Action high output pins`
-      * `01010 = Action low output pins`
+      * `01000 = Action click toggle output pins`
+      * `01001 = Action click high output pins`
+      * `01010 = Action click low output pins`
       * `01011 = Action longpress toggle output pins`
       * `01100 = Action longpress high output pins`
       * `01101 = Action longpress low output pins`
