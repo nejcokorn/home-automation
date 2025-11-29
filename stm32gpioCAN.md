@@ -49,7 +49,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
         * 1st = package with the desired future state, 0 = LOW, 1 = HIGH, 2 = TOGGLE, 3 = PWM
         * 2nd = extra value (optional - PWM)
         * 3rd = delay
-    * `110...111 = Reserved`.
+    * `101...111 = Reserved`.
   * **S (Signal)**: `0 = Digital`, `1 = Analog`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
   * **TT (Type)**:
@@ -63,26 +63,19 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **C (Config)**: `1 = Configuration package`.
   * **0 (Operation)**: `0 = Get, 1 = Set`.
   * **S (Settings/Options)**: Values for each option are present in B5..B8
-      * `00000 = Save configuration to EEPROM`
-      * `00001 = Input acts as a Button on rising edge`
-      * `00010 = Input acts as a Button on falling edge`
-      * `00011 = Debounce in microseconds`
-      * `00100 = Longpress in milliseconds`
-      * `00101 = Double-click in milliseconds`
-      * `00110 = Delay in milliseconds`
-      * `00111 = Get/Reset all actions`
-      * `01000 = Action click toggle output pins`
-      * `01001 = Action click high output pins`
-      * `01010 = Action click low output pins`
-      * `01011 = Action longpress toggle output pins`
-      * `01100 = Action longpress high output pins`
-      * `01101 = Action longpress low output pins`
-      * `01110 = Action double-click toggle output pins`
-      * `01111 = Action double-click high output pins`
-      * `10000 = Action double-click low output pins`
-      * `10001 = Bypass Instantly`
-      * `10010 = Bypass determined by DIP switch`
-      * `10011 = Bypass on disconnect in milliseconds`
+      * `0x00 = Save configuration to EEPROM`
+      * `0x01 = Debounce in microseconds`
+      * `0x02 = Double-click in milliseconds`
+      * `0x03 = Get/Reset all actions`
+      * `0x04 = Action P1 base - deviceId (B5), trigger (B6), mode (B7), type (B8)`
+      * `0x05 = Action P2 ports (map)`
+      * `0x06 = Action P3 skip action if delay is present in any of the output ports (map)`
+      * `0x07 = Action P4 clear all delays on all specified output ports (map)`
+      * `0x08 = Action P5 delay in milliseconds`
+      * `0x09 = Action P6 longpress in milliseconds`
+      * `0x0A = Bypass Instantly`
+      * `0x0B = Bypass determined by DIP switch`
+      * `0x0C = Bypass on disconnect in milliseconds`
 
 * **B4 Port**: `0–255 = port selection`.
 
