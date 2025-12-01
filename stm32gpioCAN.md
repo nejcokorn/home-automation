@@ -46,10 +46,13 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * `011 = Delay in milliseconds`.
     * `100 = List all delays`.
       * Returned information is retrieved in multiple packages. Until the last package is sent, include a wait bit.
-        * 1st = package with the desired future state, 0 = LOW, 1 = HIGH, 2 = TOGGLE, 3 = PWM
-        * 2nd = extra value (optional - PWM)
-        * 3rd = delay
-    * `101...111 = Reserved`.
+        * 1. Delay id
+        * 2. Device id
+        * 3. Package with the desired future state, 0 = LOW, 1 = HIGH, 2 = TOGGLE, 3 = PWM
+        * 4. Delay in milliseconds
+    * `101 = Clear specific delay`.
+      * Data must contain the id of the delay to be cleared out.
+    * `110...111 = Reserved`.
   * **S (Signal)**: `0 = Digital`, `1 = Analog`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
   * **TT (Type)**:
