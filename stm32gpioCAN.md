@@ -1,6 +1,44 @@
 # STM32GPIO CAN Communication Protocol
 
-## 1. Frame Format
+## 1. CAN Identifier Format
+
+The STM32GPIO protocol uses **CAN 2.0b Extended Identifiers (29-bit)**.
+
+Valid identifier range:
+- Minimum: `0x00000000`
+- Maximum: `0x1FFFFFFF`
+
+### 1.1 CAN ID Structure
+
+The 29-bit CAN ID is divided into two logical fields:
+
+| Field     | Bit Range | Mask         | Description                          |
+|-----------|-----------|--------------|--------------------------------------|
+| packageId | [28:8]    | 0x1FFFFF00   | Some commands are fragmented across multiple CAN frames. The PackageId serves as a transaction identifier, grouping related frames and preventing collisions between concurrent commands. |
+| deviceId  | [7:0]     | 0x000000FF   | Target device or command identifier  |
+
+### 1.2 DeviceId Usage
+
+The `deviceId` field is used to identify **agent commands** and the physical devices.
+
+#### Reserved Agent DeviceId Values
+
+| Command Name       | DeviceId |
+|-------------------|----------|
+| getPort           | 0xF0     |
+| setPort           | 0xF1     |
+| discover          | 0xF2     |
+| ping              | 0xF3     |
+| getConfig         | 0xF4     |
+| setConfig         | 0xF5     |
+| writeEEPROM       | 0xF6     |
+| listDelays        | 0xF7     |
+| clearDelay        | 0xF8     |
+| broadcastAction   | 0xFF     |
+
+`broadcastAction (0xFF)` is reserved for broadcast messages and must be processed by all devices.
+
+## 2. CAN Data - Frame Format
 
 Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
@@ -10,7 +48,7 @@ XXXX XXXX  CDPA WExx  CMOO SDTT  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDD
 From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
 ```
 
-### 1.1 Frame Definitions
+### 2.1 Frame Definitions
 
 The **receiver ID** is not included in the payload; it is encoded in the **CAN identifier field**, which ranges from **0x000 to 0x0FF** (8-bit logical receiver ID).  
 **Broadcast address** to address all devices is 0x7FF.
@@ -27,6 +65,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
   * **W (Wait)**: `1 = Wait for next frame`.
   * **E (Error)**: `1 = Error (response to a Command)`.
+  * **N (Notify)**: `1 = Notification frame. The message is sent for informational purposes only and does not require any response or action from the receiver.`
   * **xx (Reserved)**: set to `0`.
 
 * **B3 DataCtrl (Data Control)** — bit-coded:
@@ -86,7 +125,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 ---
 
-## 2. DIP Switches
+## 3. DIP Switches
 The STM32GPIO device has two sets of DIP Switches on board:
 * **A1..A5** - This DIP switch determines the **device ID**. `0 = 500kbps, 1 = 1Mbps`.
 * **C1..C2**
@@ -95,7 +134,7 @@ The STM32GPIO device has two sets of DIP Switches on board:
 
 ---
 
-## 3. Communication Rules
+## 4. Communication Rules
 
 1. **Command** frames (`C=1`) require an **Acknowledge** response (`A=1`), or an **Error** response (`E=1`) with mirrored `CommCtrl/DataCtrl` fields and resulting `Data`.
 2. **Push** frames (`C=0`) are asynchronous and do not require acknowledgement.
@@ -107,7 +146,7 @@ The STM32GPIO device has two sets of DIP Switches on board:
 
 ---
 
-## 4. Error Handling
+## 5. Error Handling
 
 On processing failure, the Acknowledge frame (`A=1, E=1`) carries an error code in **Data**:
 
@@ -117,9 +156,9 @@ On processing failure, the Acknowledge frame (`A=1, E=1`) carries an error code 
 
 ---
 
-## 5. Discovery
+## 6. Discovery
 
-### 5.1 Request (broadcast)
+### 6.1 Request (broadcast)
 
 ```
 CAN ID = 0x2FF
@@ -130,7 +169,7 @@ Port = 0
 Data = 0x00000000
 ```
 
-### 5.2 Response (per device, unicast)
+### 6.2 Response (per device, unicast)
 
 ```
 CAN ID = 0x000 + <deviceID>
@@ -143,7 +182,7 @@ Data = <firmware>
 
 ---
 
-## 6. Field Summary
+## 7. Field Summary
 
 | Byte | Name     | Description                          |
 | ---- | -------- | ------------------------------------ |
@@ -158,5 +197,5 @@ Data = <firmware>
 
 ---
 
-## 7. Examples
+## 8. Examples
 TODO
