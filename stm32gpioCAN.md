@@ -1,42 +1,56 @@
-# STM32GPIO CAN Communication Protocol
+# CAN Communication Protocol
 
-## 1. CAN Identifier Format
+## 1. CAN Identifier
+### 1.1 Identifier Format
 
-The STM32GPIO protocol uses **CAN 2.0b Extended Identifiers (29-bit)**.
+The STM32 GPIO protocol uses **CAN 2.0B Extended Identifiers (29-bit)**.
 
-Valid identifier range:
-- Minimum: `0x00000000`
-- Maximum: `0x1FFFFFFF`
+**Valid identifier range:**
 
-### 1.1 CAN ID Structure
+* Minimum: `0x00000000`
+* Maximum: `0x1FFFFFFF`
 
-The 29-bit CAN ID is divided into two logical fields:
+---
 
-| Field     | Bit Range | Mask         | Description                          |
-|-----------|-----------|--------------|--------------------------------------|
-| packageId | [28:8]    | 0x1FFFFF00   | Some commands are fragmented across multiple CAN frames. The PackageId serves as a transaction identifier, grouping related frames and preventing collisions between concurrent commands. |
-| deviceId  | [7:0]     | 0x000000FF   | Target device or command identifier  |
+### 1.2. CAN ID Structure
 
-### 1.2 DeviceId Usage
+The 29-bit CAN identifier is divided into logical fields that enable command routing, fragmentation, and device addressing.
 
-The `deviceId` field is used to identify **agent commands** and the physical devices.
+### 1.2.1 Bit Layout
 
-#### Reserved Agent DeviceId Values
+| Field       | Bit Range | Mask       | Description                                             |
+| ----------- | --------- | ---------- | ------------------------------------------------------- |
+| commandId   | [28:16]   | 0x1FFF0000 | Identifies the command type and sequence.               |
+| initiatorId | [15:8]    | 0x0000FF00 | ID of the device or agent initiating the communication. |
+| responderId | [7:0]     | 0x000000FF | ID of the device expected to respond.                   |
 
-| Command Name       | DeviceId |
-|-------------------|----------|
-| getPort           | 0xF0     |
-| setPort           | 0xF1     |
-| discover          | 0xF2     |
-| ping              | 0xF3     |
-| getConfig         | 0xF4     |
-| setConfig         | 0xF5     |
-| writeEEPROM       | 0xF6     |
-| listDelays        | 0xF7     |
-| clearDelay        | 0xF8     |
-| broadcastAction   | 0xFF     |
+> **Note:** The `commandId` implicitly acts as a **Package ID** when a command is fragmented across multiple CAN frames. All frames belonging to the same transaction must share the same `commandId`.
 
-`broadcastAction (0xFF)` is reserved for broadcast messages and must be processed by all devices.
+---
+
+### 1.3. Device ID Usage
+
+The `initiatorId` and `responderId` fields identify **logical agents** as well as **physical devices** on the CAN bus.
+
+#### 1.4.1 Reserved Agent Device IDs
+
+The following `DeviceId` values are reserved for agent-level commands:
+
+| Command Name    | DeviceId |
+| --------------- | -------- |
+| getPort         | 0xF0     |
+| setPort         | 0xF1     |
+| discover        | 0xF2     |
+| ping            | 0xF3     |
+| getConfig       | 0xF4     |
+| setConfig       | 0xF5     |
+| writeEEPROM     | 0xF6     |
+| listDelays      | 0xF7     |
+| clearDelay      | 0xF8     |
+| broadcastAction | 0xFF     |
+
+* `0xFF` is reserved for **broadcast commands**
+* Device IDs below `0xF0` are available for physical devices
 
 ## 2. CAN Data - Frame Format
 
