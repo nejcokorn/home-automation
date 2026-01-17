@@ -104,19 +104,17 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
         * 1 = high
         * 2 = toggle
         * 3 = pwm
-    * `0x02 = Extra value`.
-      * pwm duty cycle
-    * `0x03 = Delay in milliseconds`.
-    * `0x04 = List all delays`.
+    * `0x02 = Delay in milliseconds`.
+    * `0x03 = List all delays`.
       * Returned information is retrieved in multiple packages. Until the last package is sent, include a wait bit.
         * 1. Delay id
         * 2. Device id
         * 3. Executable
         * 4. Package with the desired future state, 0 = LOW, 1 = HIGH, 2 = TOGGLE, 3 = PWM
         * 5. Delay in milliseconds
-    * `0x05 = Clear delay by id`.
+    * `0x04 = Clear delay by id`.
       * Data must contain the id of the delay to be cleared out.
-    * `0x06 = Clear delay by port`.
+    * `0x05 = Clear delay by port`.
       * This will clear out delays on all devices related to that device and port.
 
   * **Config operations**
