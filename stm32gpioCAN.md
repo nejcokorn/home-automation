@@ -58,8 +58,8 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-XXXX XXXX  CDPA WExx  CMOO SDTT  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
-From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Data LSB
+DPAE WNxx  PCSD TTxx  OOOO OOOO  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+CommCtrl   DataCtrl   Operation  Port       Data MSB   Data       Data       Data LSB
 ```
 
 ### 2.1 Frame Definitions
@@ -67,72 +67,84 @@ From       CommCtrl   DataCtrl   Port       Data MSB   Data       Data       Dat
 The **receiver ID** is not included in the payload; it is encoded in the **CAN identifier field**, which ranges from **0x000 to 0x0FF** (8-bit logical receiver ID).  
 **Broadcast address** to address all devices is 0x7FF.
 
-* **B1 From**: 8-bit sender ID (`0x00–0xFF`).
+* **B1 CommCtrl (Communication Control)** — bit-coded:
 
-* **B2 CommCtrl (Communication Control)** — bit-coded:
-
-  * **C (Message Type)**: `0 = Data push event`, `1 = Command`.
-  * **D (Discovery)**: `1 = Discover other devices on the network`.
+  * **D (Discover)**: `1 = Discover other devices on the network`.
     * Only reply to the broadcast address.
   * **P (Ping)**: `ACK = 0 & P = 1 => Ping device, ACK = 1 & P = 1 => Pong back`.
     * Only reply to the broadcast/deviceId address.
   * **A (Acknowledge)**: `1 = Acknowledge (response to a Command)`.
-  * **W (Wait)**: `1 = Wait for next frame`.
   * **E (Error)**: `1 = Error (response to a Command)`.
-  * **N (Notify)**: `1 = Notification frame. The message is sent for informational purposes only and does not require any response or action from the receiver.`
-  * **xx (Reserved)**: set to `0`.
+  * **W (Wait)**: `1 = Wait for next frame`.
+  * **N (Notify)**: `1 = Notification frame. The package is sent for informational purposes only - does not require any response or action from the receiver.`
+  * **X (Reserved)**: set to `0`.
+  * **X (Reserved)**: set to `0`.
 
 * **B3 DataCtrl (Data Control)** — bit-coded:
 
-  * **C (Config)**: `0 = Data package`.
-  * **OOO (Operation)**:
-    * `000 = Get/Push`.
+  * **P (Package Type)**: `0 = Data push`, `1 = Command`.
+  * **C (Config)**: `1 = Config command`.
+  * **S (Signal)**: `0 = Digital`, `1 = Analog`.
+  * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
+  * **TT (Data Type)**:
+    * `00 = Bit`.
+    * `01 = Byte (8-bit)`.
+    * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay low in miliseconds`.
+    * `11 = Float`.
+  * **X (Reserved)**: set to `0`.
+  * **X (Reserved)**: set to `0`.
+
+* **B3 Operations**:
+  * **Command operations**
+    * `0x00 = Get/Push`.
       * Get the current state of the input/output ports
-    * `001 = Set`.
+    * `0x01 = Set output port`.
       * Set the desired state to the output ports.
         * 0 = low
         * 1 = high
         * 2 = toggle
         * 3 = pwm
-    * `010 = Extra value`.
+    * `0x02 = Extra value`.
       * pwm duty cycle
-    * `011 = Delay in milliseconds`.
-    * `100 = List all delays`.
+    * `0x03 = Delay in milliseconds`.
+    * `0x04 = List all delays`.
       * Returned information is retrieved in multiple packages. Until the last package is sent, include a wait bit.
         * 1. Delay id
         * 2. Device id
         * 3. Executable
         * 4. Package with the desired future state, 0 = LOW, 1 = HIGH, 2 = TOGGLE, 3 = PWM
         * 5. Delay in milliseconds
-    * `101 = Clear specific delay`.
+    * `0x05 = Clear delay by id`.
       * Data must contain the id of the delay to be cleared out.
-    * `110...111 = Reserved`.
-  * **S (Signal)**: `0 = Digital`, `1 = Analog`.
-  * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
-  * **TT (Type)**:
-    * `00 = Bit`.
-    * `01 = Byte (8-bit)`.
-    * `10 = Integer (32-bit)`, `When D = 0 and B4 != 0, data represent delay low in miliseconds`.
-    * `11 = Float`.
+    * `0x06 = Clear delay by port`.
+      * This will clear out delays on all devices related to that device and port.
 
-* **B3 ConfigCtrl (Config Control)** — bit-coded:
-
-  * **C (Config)**: `1 = Configuration package`.
-  * **0 (Operation)**: `0 = Get, 1 = Set`.
-  * **S (Settings/Options)**: Values for each option are present in B5..B8
-      * `0x00 = Save configuration to EEPROM`
-      * `0x01 = Debounce in microseconds`
-      * `0x02 = Double-click in milliseconds`
-      * `0x03 = Get/Reset all actions`
-      * `0x04 = Action P1 base - deviceId (B5), trigger (B6), mode (B7), type (B8)`
-      * `0x05 = Action P2 ports (map)`
-      * `0x06 = Action P3 skip action if delay is present in any of the output ports (map)`
-      * `0x07 = Action P4 clear all delays on all specified output ports (map)`
-      * `0x08 = Action P5 delay in milliseconds`
-      * `0x09 = Action P6 longpress in milliseconds`
-      * `0x0A = Bypass Instantly`
-      * `0x0B = Bypass determined by DIP switch`
-      * `0x0C = Bypass on disconnect in milliseconds`
+  * **Config operations**
+    * `0x00 = Save configuration to EEPROM`
+    * `0x01 = Get Debounce in microseconds`
+    * `0x02 = Get Double-click in milliseconds`
+    * `0x03 = Get Get/Reset all actions`
+    * `0x04 = Get Action P1 base - deviceId (B5), trigger (B6), mode (B7), type (B8)`
+    * `0x05 = Get Action P2 ports (map)`
+    * `0x06 = Get Action P3 skip action if delay is present in any of the output ports (map)`
+    * `0x07 = Get Action P4 clear all delays on all specified output ports (map)`
+    * `0x08 = Get Action P5 delay in milliseconds`
+    * `0x09 = Get Action P6 longpress in milliseconds`
+    * `0x0A = Get Bypass Instantly`
+    * `0x0B = Get Bypass determined by DIP switch`
+    * `0x0C = Get Bypass on disconnect in milliseconds`
+    * `0x81 = Set Debounce in microseconds`
+    * `0x82 = Set Double-click in milliseconds`
+    * `0x83 = Set Get/Reset all actions`
+    * `0x84 = Set Action P1 base - deviceId (B5), trigger (B6), mode (B7), type (B8)`
+    * `0x85 = Set Action P2 ports (map)`
+    * `0x86 = Set Action P3 skip action if delay is present in any of the output ports (map)`
+    * `0x87 = Set Action P4 clear all delays on all specified output ports (map)`
+    * `0x88 = Set Action P5 delay in milliseconds`
+    * `0x89 = Set Action P6 longpress in milliseconds`
+    * `0x8A = Set Bypass Instantly`
+    * `0x8B = Set Bypass determined by DIP switch`
+    * `0x8C = Set Bypass on disconnect in milliseconds`
 
 * **B4 Port**: `0–255 = port selection`.
 
