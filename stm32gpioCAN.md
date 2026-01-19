@@ -58,7 +58,7 @@ Each CAN message uses a payload of **8 bytes (DLC = 8)**.
 
 ```
 B1         B2         B3         B4         B5         B6         B7         B8
-DPAE WNxx  PCSD TTxx  OOOO OOOO  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
+DPAE WNxx  CCSD TTxx  OOOO OOOO  PPPP PPPP  DDDD DDDD  DDDD DDDD  DDDD DDDD  DDDD DDDD
 CommCtrl   DataCtrl   Operation  Port       Data MSB   Data       Data       Data LSB
 ```
 
@@ -82,7 +82,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
 
 * **B3 DataCtrl (Data Control)** — bit-coded:
 
-  * **P (Package Type)**: `0 = Data push`, `1 = Command`.
+  * **C (Command)**: `1 = Command`, `0 = Data push`.
   * **C (Config)**: `1 = Config command`.
   * **S (Signal)**: `0 = Digital`, `1 = Analog`.
   * **D (Direction)**: `0 = Output ports`, `1 = Input ports`.
