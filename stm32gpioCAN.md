@@ -120,9 +120,9 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
   * **Config operations**
     * `0x00 = Get - Combine get operation with the rest of the operations`
     * `0x80 = Get - Combine set operation with the rest of the operations`
-    * -----------------------------------
+    -----------------------------------
     * `0x00 = Empty`
-    * -----------------------------------
+    -----------------------------------
     * `0x01 = Debounce in microseconds`
     * `0x02 = Double-click in milliseconds`
     * `0x03 = Get/Reset all actions`
