@@ -121,7 +121,6 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * `0x00 = Get - Combine get operation with the rest of the operations`
     * `0x80 = Get - Combine set operation with the rest of the operations`
     * -----------------------------------
-    * `0xFF = Save configuration to EEPROM`
     * `0x00 = Empty`
     * -----------------------------------
     * `0x01 = Debounce in microseconds`
@@ -136,6 +135,7 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * `0x0A = Bypass Instantly`
     * `0x0B = Bypass determined by DIP switch`
     * `0x0C = Bypass on disconnect in milliseconds`
+    * `0x7F = Save configuration to EEPROM (Only available in combination with set)`
 
 * **B4 Port**: `0–255 = port selection`.
 
