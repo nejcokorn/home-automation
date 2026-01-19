@@ -118,31 +118,24 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
       * This will clear out delays on all devices related to that device and port.
 
   * **Config operations**
-    * `0x00 = Save configuration to EEPROM`
-    * `0x01 = Get Debounce in microseconds`
-    * `0x02 = Get Double-click in milliseconds`
-    * `0x03 = Get Get/Reset all actions`
-    * `0x04 = Get Action P1 base - deviceId (B5), trigger (B6), mode (B7), type (B8)`
-    * `0x05 = Get Action P2 ports (map)`
-    * `0x06 = Get Action P3 skip action if delay is present in any of the output ports (map)`
-    * `0x07 = Get Action P4 clear all delays on all specified output ports (map)`
-    * `0x08 = Get Action P5 delay in milliseconds`
-    * `0x09 = Get Action P6 longpress in milliseconds`
-    * `0x0A = Get Bypass Instantly`
-    * `0x0B = Get Bypass determined by DIP switch`
-    * `0x0C = Get Bypass on disconnect in milliseconds`
-    * `0x81 = Set Debounce in microseconds`
-    * `0x82 = Set Double-click in milliseconds`
-    * `0x83 = Set Get/Reset all actions`
-    * `0x84 = Set Action P1 base - deviceId (B5), trigger (B6), mode (B7), type (B8)`
-    * `0x85 = Set Action P2 ports (map)`
-    * `0x86 = Set Action P3 skip action if delay is present in any of the output ports (map)`
-    * `0x87 = Set Action P4 clear all delays on all specified output ports (map)`
-    * `0x88 = Set Action P5 delay in milliseconds`
-    * `0x89 = Set Action P6 longpress in milliseconds`
-    * `0x8A = Set Bypass Instantly`
-    * `0x8B = Set Bypass determined by DIP switch`
-    * `0x8C = Set Bypass on disconnect in milliseconds`
+    * `0x00 = Get - Combine get operation with the rest of the operations`
+    * `0x80 = Get - Combine set operation with the rest of the operations`
+    * -----------------------------------
+    * `0xFF = Save configuration to EEPROM`
+    * `0x00 = Empty`
+    * -----------------------------------
+    * `0x01 = Debounce in microseconds`
+    * `0x02 = Double-click in milliseconds`
+    * `0x03 = Get/Reset all actions`
+    * `0x04 = Action P1 base - trigger (B6), mode (B7), type (B8)`
+    * `0x05 = Action P2 trigger action - deviceId (B5), ports (map)`
+    * `0x06 = Action P3 skip action - deviceId (B5), ports (map) | Skip when delay is present in target port(s)`
+    * `0x07 = Action P4 clear action - deviceId (B5), ports (map) | Clear delays on specified output port(s)`
+    * `0x08 = Action P5 delay in milliseconds`
+    * `0x09 = Action P6 longpress in milliseconds`
+    * `0x0A = Bypass Instantly`
+    * `0x0B = Bypass determined by DIP switch`
+    * `0x0C = Bypass on disconnect in milliseconds`
 
 * **B4 Port**: `0–255 = port selection`.
 
