@@ -132,8 +132,8 @@ The **receiver ID** is not included in the payload; it is encoded in the **CAN i
     * `0x07 = Action P4 clear action - deviceId (B5), ports (map) | Clear delays on specified output port(s)`
     * `0x08 = Action P5 delay in milliseconds`
     * `0x09 = Action P6 longpress in milliseconds`
-    * `0x0A = Bypass Instantly`
-    * `0x0B = Bypass determined by DIP switch`
+    * `0x0A = Action P7 Config switch`
+    * `0x0B = Bypass Instantly`
     * `0x0C = Bypass on disconnect in milliseconds`
     * `0x7F = Save configuration to EEPROM (Only available in combination with set)`
 
