@@ -10,23 +10,31 @@ Main module (STM32) + expansion modules on CAN bus -> Raspberry Pi (home-automat
 
 ```mermaid
 flowchart LR
-  subgraph Field[Field devices]
-    Sensors[Sensors 
-        • BME68x
-        • DS18B20
+  subgraph Device-1[Home-automation-device-1]
+    Main-1[
+        Microcontroller
+        DIP Device Address
+        DIP config
     ]
-    IO[
-        • Switches
-        • Buttons]
+    Input-1[Inputs ports]
+    Output-1[Outputs ports
+        • Relays
+        • PWM
+    ]
+    CANMod-1[CAN module]
   end
-
-  subgraph HW[Home automation hardware]
-    Main[
-        Main module PCB
-        I/O + DIP config
+  subgraph Device-n[Home-automation-device-n]
+    Main-n[
+        Microcontroller
+        DIP Device Address
+        DIP config
     ]
-    Relay[Relay module]
-    CANMod[CAN module]
+    Input-n[Input ports]
+    Output-n[Output ports
+        • Relays
+        • PWM
+    ]
+    CANMod-n[CAN module]
   end
 
   subgraph Pi[ Raspberry Pi 5 ]
@@ -40,18 +48,20 @@ flowchart LR
   end
 
   subgraph Stack[Docker compose stack]
-    Mosq[MQTT]
     NR[Node-RED]
     Influx[InfluxDB]
+    Mosq[MQTT]
     Graf[Grafana]
   end
 
-  Sensors -->|1-Wire / I2C / RS485| Pi
-  IO -->|Digital/Analog I/O| Main
-  Relay --- Main
-  CANMod --- Main
-  Main <-->|CAN bus| Pi
-
+  Output-1 --- Main-1
+  Input-1 --- Main-1
+  CANMod-1 --- Main-1
+  Output-n --- Main-n
+  Input-n --- Main-n
+  CANMod-n --- Main-n
+  Main-1 <--> | CAN bus | Main-n
+  Main-1 <--> | CAN bus | Agent
   Agent -->|HTTP API| NR
   Agent -->|MQTT publish| Mosq
   NR -->|pub/sub| Mosq
