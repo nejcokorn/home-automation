@@ -6,6 +6,59 @@ System-level documentation and hardware artifacts for the home automation stack.
 
 Main module (STM32) + expansion modules on CAN bus -> Raspberry Pi (home-automation-agent) -> HTTP for control + MQTT for telemetry -> Node-RED flows -> InfluxDB/Grafana
 
+## Architecture flowchart
+
+```mermaid
+flowchart LR
+  subgraph Field[Field devices]
+    Sensors[Sensors 
+        • BME68x
+        • DS18B20
+    ]
+    IO[
+        • Switches
+        • Buttons]
+  end
+
+  subgraph HW[Home automation hardware]
+    Main[
+        Main module PCB
+        I/O + DIP config
+    ]
+    Relay[Relay module]
+    CANMod[CAN module]
+  end
+
+  subgraph Pi[ Raspberry Pi 5 ]
+    Agent[
+        home-automation-agent
+            • CAN
+            • HTTP
+            • MQTT bridge
+            • Gateway WebSockets
+    ]
+  end
+
+  subgraph Stack[Docker compose stack]
+    Mosq[MQTT]
+    NR[Node-RED]
+    Influx[InfluxDB]
+    Graf[Grafana]
+  end
+
+  Sensors -->|1-Wire / I2C / RS485| Pi
+  IO -->|Digital/Analog I/O| Main
+  Relay --- Main
+  CANMod --- Main
+  Main <-->|CAN bus| Pi
+
+  Agent -->|HTTP API| NR
+  Agent -->|MQTT publish| Mosq
+  NR -->|pub/sub| Mosq
+  NR -->|write metrics| Influx
+  Graf -->|query| Influx
+```
+
 ## Related repositories
 
 - `home-automation` (this repo): hardware files + Raspberry Pi setup + software compose
