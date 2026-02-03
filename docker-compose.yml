@@ -7,9 +7,9 @@ services:
       - "1883:1883" # default mqtt port
       - "9001:9001" # websockets
     volumes:
-      - ./mqtt/config:/mosquitto/config:rw
-      - ./mqtt/data:/mosquitto/data:rw
-      - ./mqtt/log:/mosquitto/log:rw
+      - ./mqtt/config:/mosquitto/config
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
     restart: unless-stopped
 
   nodered:
