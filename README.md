@@ -62,9 +62,9 @@ flowchart LR
 ## Related repositories
 
 - `home-automation` (this repo): hardware files + Raspberry Pi setup + software compose
-- `home-automation-firmware`: STM32 firmware + CAN protocol
-- `home-automation-agent`: NestJS CAN/HTTP/MQTT service for the Raspberry Pi
-- `home-automation-node-red`: Node-RED nodes that call the agent HTTP API
+- [`home-automation-firmware`](https://github.com/nejcokorn/home-automation-firmware): STM32 firmware + CAN protocol
+- [`home-automation-agent`](https://github.com/nejcokorn/home-automation-agent): NestJS CAN/HTTP/MQTT service for the Raspberry Pi
+- [`home-automation-node-red`](https://github.com/nejcokorn/home-automation-node-red): Node-RED nodes that call the agent HTTP API
 
 ## Hardware
 
