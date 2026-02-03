@@ -145,7 +145,7 @@ Nodes wrap the agent HTTP API:
 
 1. Hardware: build the main module PCB and relay/CAN modules (see `hardware/`).
 2. Firmware: flash the STM32 with `home-automation-firmware`.
-   - Arduino IDE: add the STM32 board manager URL (see `home-automation-firmware/ArduinoIDE.md`).
+   - Arduino IDE: add the STM32 board manager URL (see [`home-automation-firmware/ArduinoIDE.md`](https://github.com/nejcokorn/home-automation-firmware/blob/main/ArduinoIDE.md)).
 3. Raspberry Pi: follow `rpi5.md` for OS setup, Docker, 1-Wire, and CAN.
 4. CAN interfaces: create `can0`/`can1` systemd services (see `rpi5.md`).
 5. Agent: install or run `home-automation-agent` and point MQTT to Mosquitto.
