@@ -2,6 +2,7 @@ mqtt/data/*
 !mqtt/data/.gitkeep
 mqtt/config/*
 !mqtt/config/.gitkeep
+!mqtt/config/mosquitto.conf
 mqtt/log/*
 !mqtt/log/.gitkeep
 nodered/data/*
