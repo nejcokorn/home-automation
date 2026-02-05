@@ -59,14 +59,14 @@ All other tasks can be using Personal Computer connected to Raspberry Pi over SS
 ## Configure NVMe data partition
 Create `data` directory in root directory
 ```bash
-sudo mkdir /data
-sudo chmod 777 /data
+sudo mkdir /home/rpi/data
+sudo chmod 777 /home/rpi/data
 ```
 
 Mount `data` partition to `/etc/fstab`
 ```bash
 LABEL=writable	/	ext4	defaults	0	1
-LABEL=data	/data	ext4    defaults        0       1
+LABEL=data	/home/rpi/data	ext4    defaults        0       1
 LABEL=system-boot	/boot/firmware	vfat	defaults	0	1
 ```
 
