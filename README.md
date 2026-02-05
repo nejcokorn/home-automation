@@ -141,6 +141,21 @@ Nodes wrap the agent HTTP API:
 - InfluxDB 2.7 (8086)
 - Grafana (3000)
 
+### Containers setup
+
+1. Create base folders (if missing):
+   - `mqtt/config`, `mqtt/data`, `mqtt/log`
+   - `nodered/data`
+   - `influxdb/data`, `influxdb/config`
+   - `grafana/data`
+   - `homeassistant/config`
+2. Ensure Mosquitto config exists:
+   - `mqtt/config/mosquitto.conf` (see the default in this repo)
+3. Start the stack:
+   - `docker compose up -d`
+4. Verify:
+   - `docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'`
+
 ## Setup (high level)
 
 1. Hardware: build the main module PCB and relay/CAN modules (see `hardware/`).
