@@ -2,10 +2,8 @@ services:
   mqtt5:
     image: eclipse-mosquitto
     container_name: mqtt5
-    user: "$(id -u):$(id -g)"
-    ports:
-      - "1883:1883" # default mqtt port
-      - "9001:9001" # websockets
+    user: "${UID}:${GID}"
+    network_mode: host
     volumes:
       - ./mqtt/config:/mosquitto/config
       - ./mqtt/data:/mosquitto/data
@@ -15,9 +13,8 @@ services:
   nodered:
     image: nodered/node-red:latest
     container_name: nodered
-    user: "$(id -u):$(id -g)"
-    ports:
-      - "1880:1880"
+    user: "${UID}:${GID}"
+    network_mode: host
     volumes:
       - ./nodered/data:/data
     environment:
@@ -29,9 +26,8 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: influxdb
-    user: "$(id -u):$(id -g)"
-    ports:
-      - "8086:8086"
+    user: "${UID}:${GID}"
+    network_mode: host
     volumes:
       - ./influxdb/data:/var/lib/influxdb2
       - ./influxdb/config:/etc/influxdb2
@@ -47,9 +43,8 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
-    user: "$(id -u):$(id -g)"
-    ports:
-      - "3000:3000"
+    user: "${UID}:${GID}"
+    network_mode: host
     volumes:
       - ./grafana/data:/var/lib/grafana
     environment:
@@ -62,7 +57,7 @@ services:
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
     container_name: homeassistant
-    user: "$(id -u):$(id -g)"
+    user: "${UID}:${GID}"
     network_mode: host
     privileged: true
     volumes:

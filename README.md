@@ -153,7 +153,8 @@ Nodes wrap the agent HTTP API:
 2. Ensure Mosquitto config exists:
    - `mqtt/config/mosquitto.conf` (see the default in this repo)
 3. Start the stack:
-   - `docker compose up -d`
+   - `./scripts/compose-env.sh`
+   - (Writes `.env` with UID/GID, then runs `docker compose up -d`)
 4. Verify:
    - `docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'`
 
