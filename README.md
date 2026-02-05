@@ -140,7 +140,7 @@ Nodes wrap the agent HTTP API:
 - Node-RED (1880)
 - InfluxDB 2.7 (8086)
 - Grafana (3000)
-- Home Assistant (8123, host network)
+- Home Assistant (8123)
 
 ### Containers setup
 
