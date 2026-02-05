@@ -156,6 +156,16 @@ Nodes wrap the agent HTTP API:
 4. Verify:
    - `docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'`
 
+### HACS (Home Assistant Community Store) - Container install
+
+1. Open a shell in the Home Assistant container:
+   - `docker exec -it homeassistant bash`
+2. Run the HACS download script:
+   - `wget -O - https://get.hacs.xyz | bash -`
+3. Restart Home Assistant:
+   - `docker compose restart homeassistant`
+4. In the Home Assistant UI, add the HACS integration and complete setup.
+
 ## Setup (high level)
 
 1. Hardware: build the main module PCB and relay/CAN modules (see `hardware/`).
