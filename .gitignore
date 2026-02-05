@@ -13,3 +13,5 @@ influxdb/config/*
 !influxdb/config/.gitkeep
 grafana/data/*
 !grafana/data/.gitkeep
+homeassistant/config/*
+!homeassistant/config/.gitkeep
