@@ -110,10 +110,10 @@ systemctl start can1.service || echo "can1 is not available yet"
 
 echo "=== Install Home Automation Agent ==="
 
-curl -fL -O https://github.com/nejcokorn/home-automation-agent/releases/download/v1.1.0/home-automation-agent_1.1.0_arm64.deb
+curl -fL -O https://github.com/nejcokorn/home-automation-agent/releases/download/v1.2.0/home-automation-agent_1.2.0_arm64.deb
 
-# Install home-automation-agent_1.1.0_arm64.deb
-sudo dpkg -i home-automation-agent_1.1.0_arm64.deb
+# Install home-automation-agent_1.2.0_arm64.deb
+sudo dpkg -i home-automation-agent_1.2.0_arm64.deb
 
 # Fix broken dependencies if any
 apt-get -f install -y
