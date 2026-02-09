@@ -1,0 +1,41 @@
+#cloud-config
+hostname: homeautomation
+manage_etc_hosts: true
+packages:
+- avahi-daemon
+- net-tools
+- raspi-config
+- build-essential
+- git
+- ca-certificates
+- curl
+apt:
+  conf: |
+    Acquire {
+      Check-Date "false";
+    };
+
+package_update: true
+package_upgrade: true
+
+# Setup rpi as system user
+users:
+- name: rpi
+  groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo
+  shell: /bin/bash
+  lock_passwd: false
+  passwd: 
+
+# Enable password authentication for SSH
+ssh_pwauth: true
+
+
+write_files:
+- encoding: b64
+  content: 
+  owner: root:root
+  path: /usr/local/bin/homeautomation.sh
+  permissions: '0755'
+
+runcmd:
+- [ bash, /usr/local/bin/homeautomation.sh ]
