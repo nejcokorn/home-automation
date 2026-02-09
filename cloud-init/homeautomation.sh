@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -7,7 +7,9 @@ export DEBIAN_FRONTEND=noninteractive
 # Docker installation
 # ================================
 
-echo "=== Add docker offical GPG key and repository ==="
+echo "=== Update apt cache and install prerequisites ==="
+apt-get update
+apt-get install -y ca-certificates curl
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 chmod a+r /etc/apt/keyrings/docker.asc
@@ -22,10 +24,10 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 
 echo "=== Upade system with the package list from docker repository ==="
-apt update
+apt-get update
 
 echo "=== Install docker packages ==="
-apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 echo "=== Add rpi user to the docker group to grant all the permissions related to docker ==="
 usermod -aG docker rpi
@@ -34,65 +36,30 @@ systemctl enable docker
 systemctl start docker
 
 # ================================
+# Configure PCI Express 3, 1-Wire and CAN in config.txt
+# ================================
+echo "=== Configuring PCI Express 3, 1-Wire and CAN in config.txt ==="
+sudo tee -a "/boot/firmware/config.txt" > /dev/null << 'EOF'
+# Enable PCI Express 3
+dtparam=pciex1
+dtparam=pciex1_gen=3
+
+# Enable 1-Wire communication
+dtoverlay=w1-gpio
+
+# Enable CAN communication
+dtoverlay=i2c0
+dtoverlay=spi1-3cs
+dtoverlay=mcp2515,spi1-2,oscillator=16000000,interrupt=13
+dtoverlay=mcp2515,spi1-1,oscillator=16000000,interrupt=22
+EOF
+
+# ================================
 # Raspberry Pi 2-CH CAN HAT setup
 # ================================
 
-CONFIG_FILE="/boot/firmware/config.txt"
-
-echo "=== Enabling SPI via raspi-config ==="
-raspi-config nonint do_spi 0
-
-echo "=== Updating system ==="
-apt-get update
-
-echo "=== Installing required packages ==="
-apt-get install -y \
-	build-essential \
-	unzip \
-	wget \
-	can-utils \
-	i2c-tools \
-	net-tools
-
-echo "=== Configuring CAN overlays in config.txt ==="
-
-if ! grep -q "mcp2515,spi1-1" "$CONFIG_FILE"; then
-	cat << 'EOF' >> "$CONFIG_FILE"
-
-[all]
-# Enable CAN communication
-dtparam=spi=on
-dtoverlay=i2c0
-dtoverlay=spi1-3cs
-dtoverlay=mcp2515,spi1-1,oscillator=16000000,interrupt=22
-dtoverlay=mcp2515,spi1-2,oscillator=16000000,interrupt=13
-EOF
-	echo "CAN overlays added to config.txt"
-else
-	echo "CAN overlays already present, skipping"
-fi
-
-echo "=== Installing BCM2835 library ==="
-if [ ! -d "/usr/local/include/bcm2835.h" ]; then
-	wget -q http://www.airspayce.com/mikem/bcm2835/bcm2835-1.75.tar.gz
-	tar zxvf bcm2835-1.75.tar.gz
-	cd bcm2835-1.75
-	./configure
-	make
-	make check
-	make install
-	cd ..
-else
-	echo "BCM2835 already installed, skipping"
-fi
-
-echo "=== Installing wiringPi ==="
-if ! command -v gpio >/dev/null 2>&1; then
-	wget -q https://github.com/WiringPi/WiringPi/releases/download/3.18/wiringpi_3.18_arm64.deb
-	dpkg -i wiringpi_3.18_arm64.deb
-else
-	echo "wiringPi already installed, skipping"
-fi
+echo "=== Installing can-utils ==="
+apt-get install can-utils
 
 echo "=== Creating systemd service for can0 ==="
 cat << 'EOF' > /etc/systemd/system/can0.service
@@ -104,7 +71,7 @@ After=network.target
 [Service]
 Type=oneshot
 ExecStart=/sbin/ip link set can0 up type can bitrate 500000
-ExecStartPost=/sbin/ifconfig can0 txqueuelen 65536
+ExecStartPost=/sbin/ip link set can0 txqueuelen 65536
 ExecStop=/sbin/ip link set can0 down
 RemainAfterExit=yes
 
@@ -122,7 +89,7 @@ After=network.target
 [Service]
 Type=oneshot
 ExecStart=/sbin/ip link set can1 up type can bitrate 500000
-ExecStartPost=/sbin/ifconfig can1 txqueuelen 65536
+ExecStartPost=/sbin/ip link set can1 txqueuelen 65536
 ExecStop=/sbin/ip link set can1 down
 RemainAfterExit=yes
 
@@ -134,10 +101,60 @@ echo "=== Enabling CAN services ==="
 systemctl daemon-reload
 systemctl enable can0.service
 systemctl enable can1.service
-systemctl start can0.service || true
-systemctl start can1.service || true
+systemctl start can0.service || echo "can0 is not available yet"
+systemctl start can1.service || echo "can1 is not available yet"
 
-echo "===================================="
-echo " CAN setup completed successfully!"
-echo " Reboot the system to apply changes."
-echo "===================================="
+#===================================="
+# Install home automation agent
+#===================================="
+
+echo "=== Install Home Automation Agent ==="
+
+curl -fL -O https://github.com/nejcokorn/home-automation-agent/releases/download/v1.1.0/home-automation-agent_1.1.0_arm64.deb
+
+# Install home-automation-agent_1.1.0_arm64.deb
+sudo dpkg -i home-automation-agent_1.1.0_arm64.deb
+
+# Fix broken dependencies if any
+apt-get -f install -y
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now home-automation-agent
+
+#===================================="
+# Setup home automation stack
+#===================================="
+
+echo "=== Setup home automation stack ==="
+
+mkdir -p /home/rpi
+cd /home/rpi
+git clone https://github.com/nejcokorn/home-automation.git
+chown rpi:rpi /home/rpi -R
+cd /home/rpi/home-automation
+sudo -u rpi bash -c 'cd /home/rpi/home-automation && ./scripts/compose-env.sh'
+
+echo "=== Install HACS in Home Assistant ==="
+sudo -u rpi bash <<'EOF'
+docker exec homeassistant bash -c '
+	set -e
+	wget -qO- https://get.hacs.xyz | bash -
+'
+docker compose restart homeassistant
+EOF
+
+echo "=== Install Node-RED packages ==="
+sudo -u rpi bash <<'EOF'
+docker exec nodered bash -c '
+	cd /data
+	npm install @home-automation/home-automation-main
+	npm install node-red-contrib-sun-position
+	npm install node-red-contrib-home-assistant-websocket
+'
+docker compose restart nodered
+EOF
+
+#===================================="
+# Reboot system to apply all changes
+#===================================="
+reboot
