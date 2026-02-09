@@ -4,7 +4,7 @@ System-level documentation and hardware artifacts for the home automation stack.
 
 ## System architecture (high level)
 
-Main module (STM32) + expansion modules on CAN bus -> Raspberry Pi (home-automation-agent) -> HTTP for control + MQTT for telemetry -> Node-RED flows -> InfluxDB/Grafana
+Main module (Microcontroller) + expansion modules on CAN bus -> Raspberry Pi (home-automation-agent) -> HTTP for control + MQTT for telemetry -> Node-RED flows -> InfluxDB/Grafana
 
 ## Architecture flowchart
 
@@ -72,7 +72,7 @@ flowchart LR
 ## Related repositories
 
 - `home-automation` (this repo): hardware files + Raspberry Pi setup + software compose
-- [`home-automation-firmware`](https://github.com/nejcokorn/home-automation-firmware): STM32 firmware + CAN protocol
+- [`home-automation-firmware`](https://github.com/nejcokorn/home-automation-firmware): Firmware + CAN protocol
 - [`home-automation-agent`](https://github.com/nejcokorn/home-automation-agent): NestJS CAN/HTTP/MQTT service for the Raspberry Pi
 - [`home-automation-node-red`](https://github.com/nejcokorn/home-automation-node-red): Node-RED nodes that call the agent HTTP API
 
@@ -95,7 +95,7 @@ Other hardware:
 - ID layout: commandId [28:16], initiatorId [15:8], responderId [7:0]
 - Reserved responder IDs: 0xF0..0xF8 for agent commands, 0xFF broadcast
 - Commands: get/set port, delay, list delays, clear delays (by id or port)
-- Config ops: debounce, doubleclick, actions, longpress, bypass, write EEPROM
+- Config operations: debounce, doubleclick, actions, longpress, bypass, write EEPROM
 - Errors returned as ACK+ERR with a data code (see firmware README)
 
 ## Agent service (home-automation-agent)
@@ -121,7 +121,7 @@ HTTP endpoints (selection)
 - `POST /can/:iface/device/:deviceId/:signalType/:direction/:portId`
 
 MQTT topics
-- Publishes: `can/<iface>/device/<deviceId>/input/<port>` and `/output/<port>` for broadcast state changes
+- Publishes: `can/<iface>/device/<deviceId>/input/<port>` and `can/<iface>/device/<deviceId>/output/<port>` for broadcast state changes
 - Subscribes: `can/+/tx` to transmit raw CAN frames
 - `agent/status` retained `online`/`offline`
 
@@ -142,46 +142,33 @@ Nodes wrap the agent HTTP API:
 - Grafana (3000)
 - Home Assistant (8123)
 
-### Containers setup
+### Raspberry Pi setup
+Deployment paths:
+- Manual: follow `rpiManualSetup.md`
+- Automated: use cloud-init scripts `user-data`, `meta-data`,  `network-config`
 
-1. Create base folders (if missing):
-   - `mqtt/config`, `mqtt/data`, `mqtt/log`
-   - `nodered/data`
-   - `influxdb/data`, `influxdb/config`
-   - `grafana/data`
-   - `homeassistant/config`
-2. Ensure Mosquitto config exists:
-   - `mqtt/config/mosquitto.conf` (see the default in this repo)
-3. Start the stack: `./scripts/compose-env.sh` (writes `.env` with UID/GID, then runs `docker compose up -d`)
-4. Verify:
-   - `docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'`
+### Home Assistant Community Store
 
-### HACS (Home Assistant Community Store) - Container install
+Use HACS to install the **Node-RED Companion** integration, which works with `node-red-contrib-home-assistant-websocket`.
 
-1. Open a shell in the Home Assistant container:
-   - `docker exec -it homeassistant bash`
-2. Run the HACS download script:
-   - `wget -O - https://get.hacs.xyz | bash -`
-3. Restart Home Assistant:
-   - `docker compose restart homeassistant`
-4. In the Home Assistant UI, add the HACS integration and complete setup.
+1. Ensure [HACS integration](https://www.hacs.xyz/docs/use/configuration/basic/) is installed in the Home Assistant container.
+2. Restart Home Assistant.
+3. In Home Assistant UI: Settings -> Devices & Services -> Add Integration -> HACS.
+4. In HACS, install **Node-RED Companion[Node-RED Companion Integration](https://github.com/zachowj/hass-node-red)**.
+5. Restart Home Assistant again after installation.
 
 ## Setup (high level)
 
 1. Hardware: build the main module PCB and relay/CAN modules (see `hardware/`).
-2. Firmware: flash the STM32 with `home-automation-firmware`.
+2. Firmware: flash Home Automation device with `home-automation-firmware`.
    - Arduino IDE: add the STM32 board manager URL (see [`home-automation-firmware/ArduinoIDE.md`](https://github.com/nejcokorn/home-automation-firmware/blob/main/ArduinoIDE.md)).
-3. Raspberry Pi: follow `rpiManualSetup.md` for OS setup, Docker, 1-Wire, and CAN.
-4. CAN interfaces: create `can0`/`can1` systemd services (see `rpiManualSetup.md`).
-5. Agent: install or run `home-automation-agent` and point MQTT to Mosquitto.
-6. Node-RED: install the nodes from `home-automation-node-red` and configure `ha-agent` with the agent URL and CAN interface.
+3. Raspberry Pi: follow `rpiManualSetup.md` (manual) or `cloud-init/homeautomation.sh` (automated) for OS setup, Docker, 1-Wire, and CAN.
+4. CAN interfaces: create `can0`/`can1` systemd services (see `rpiManualSetup.md` or `cloud-init/homeautomation.sh`).
+   - Agent: install the release `.deb`, enable the `home-automation-agent` systemd service, and point MQTT to Mosquitto.
+   - Node-RED: install the Node-RED packages in the container and configure `ha-agent` with the agent URL and CAN interface.
 
 ## Docs and artifacts
 
 - Raspberry Pi setup: `rpiManualSetup.md`
 - Hardware designs: `hardware/` (BOM, Gerbers, schematics, datasheets, 3D models)
 - Software stack: `docker-compose.yml`
-
-## Notes / gotchas
-
-- The Node-RED `ha-agent` UI placeholder shows port 3200; the agent default is 3588, so set the correct URL.
