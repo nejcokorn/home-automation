@@ -1,25 +1,5 @@
-# Raspberry Pi 5 System Configuration for Home Automation
+# Raspberry Pi 5 Manual Configuration for Home Automation
 
-## Personal Computer
-1. Download `rpi-imager` as described on the offical Raspberry Pi Web page - https://www.raspberrypi.com/software/
-2. Install `Ubuntu Desktop 24.04.3 LTS (64-bit)` to the SD card
-3. Mount SD card to Raspberry Pi 5 and start the device
-
-## Raspberry Pi - Ubuntu Desktop on SD card
-After booting from SD card use `rpi-imager` to install `Ubuntu Server 24.04.3 LTS (64-bit)` on NVMe
-Install rpi-imager
-```bash
-sudo apt install rpi-imager
-```
-Run rpi-imager
-```bash
-sudo rpi-imager
-```
-Install `Ubuntu Desktop 24.04.3 LTS (64-bit)` on the NVMe Volume and set the user, hostname and SSH using rpi-imager through rpi-imager GUI
-
-Remove SD card from Raspberry Pi and reboot into NVMe
-
-## Raspberry Pi - Ubuntu Server on NVMe
 Update system packages
 ```bash
 sudo apt update
@@ -36,7 +16,7 @@ Install ssh
 sudo apt install ssh
 ```
 
-Install Raspi config
+Install Raspberry Pi config tool
 ```bash
 sudo apt install raspi-config
 ```
@@ -46,33 +26,8 @@ Install build-essential
 sudo apt install build-essential
 ```
 
-Reboot and switch back to the Raspberry Pi Ubuntu Desktop installed on SD card
-
-## Raspberry Pi - Ubuntu Desktop on SD Card
-1. Resize root volume to 50GB using utility `disks`  
-2. With the rest of the volume create new partition and lable it `data`
-3. Remove SD card and boot into Ubuntu Server on Raspberry Pi NVMe and connect over the SSH from PC
-
-All other tasks can be using Personal Computer connected to Raspberry Pi over SSH
-
-# Raspberry Pi 5 Operating System Configuration for Home Automation
-## Configure NVMe data partition
-Create `data` directory in root directory
-```bash
-sudo mkdir /home/rpi/data
-sudo chmod 777 /home/rpi/data
-```
-
-Mount `data` partition to `/etc/fstab`
-```bash
-LABEL=writable	/	ext4	defaults	0	1
-LABEL=data	/home/rpi/data	ext4    defaults        0       1
-LABEL=system-boot	/boot/firmware	vfat	defaults	0	1
-```
-
-Run `mount -a` to mount this new partition.
-
 ## Configure PCI Express 3
+(This is only valid when used with NVMe)  
 Modify `sudo nano /boot/firmware/config.txt` and add parameters at the end of the file to setup PCI Express using version 3.0
 ```bash
 [all]
@@ -164,29 +119,7 @@ dtoverlay=mcp2515,spi1-1,oscillator=16000000,interrupt=22
 dtoverlay=mcp2515,spi1-2,oscillator=16000000,interrupt=13
 ```
 
-### Libraries
-#### BCM2835
-Install BCM2835, open the Raspberry Pi terminal, and run the following commands:
-```bash
-wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.75.tar.gz
-tar zxvf bcm2835-1.75.tar.gz
-cd bcm2835-1.75/
-sudo ./configure
-sudo make
-sudo make check
-sudo make install
-```
-For More: http://www.airspayce.com/mikem/bcm2835/
-
-#### wiringPi
-```bash
-wget https://files.waveshare.com/upload/8/8c/WiringPi-master.zip
-sudo apt-get install unzip
-unzip WiringPi-master.zip
-cd WiringPi-master/
-chmod +x ./build
-sudo ./build 
-```
+Reboot system `sudo reboot` for changes to take effect
 
 ### Tools
 Install can CLI tools
@@ -245,4 +178,65 @@ Save the file, then enable and start the service:
 ```bash
 sudo systemctl enable can1.service
 sudo systemctl start can1.service
+```
+
+## Install Home Automation Agent and Stack
+
+Install the Home Automation Agent:
+```bash
+echo "=== Install Home Automation Agent ==="
+curl -fL -O https://github.com/nejcokorn/home-automation-agent/releases/download/v1.2.0/home-automation-agent_1.2.0_arm64.deb
+
+# Install home-automation-agent_1.2.0_arm64.deb
+sudo dpkg -i home-automation-agent_1.2.0_arm64.deb
+
+# Fix broken dependencies if any
+sudo apt-get -f install -y
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now home-automation-agent
+```
+
+Setup the home automation stack:
+```bash
+echo "=== Setup home automation stack ==="
+mkdir -p /home/rpi
+cd /home/rpi
+git clone https://github.com/nejcokorn/home-automation.git
+sudo chown rpi:rpi /home/rpi -R
+cd /home/rpi/home-automation
+sudo -u rpi bash -c 'cd /home/rpi/home-automation && ./scripts/compose-env.sh'
+```
+
+Install HACS in Home Assistant:
+```bash
+echo "=== Install HACS in Home Assistant ==="
+sudo -u rpi bash <<'EOF'
+docker exec homeassistant bash -c '
+	curl -4 -fsSL https://get.hacs.xyz | bash -
+'
+EOF
+```
+
+Install Node-RED packages:
+```bash
+echo "=== Install Node-RED packages ==="
+sudo -u rpi bash <<'EOF'
+docker exec nodered bash -c '
+	cd /data
+	npm install @home-automation/home-automation-main
+	npm install node-red-contrib-sun-position
+	npm install node-red-contrib-home-assistant-websocket
+'
+EOF
+```
+
+Restart docker services:
+```bash
+echo "=== Restarting docker services ==="
+sudo -u rpi bash <<'EOF'
+cd /home/rpi/home-automation
+docker compose restart nodered
+docker compose restart homeassistant
+EOF
 ```
