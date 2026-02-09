@@ -137,10 +137,8 @@ sudo -u rpi bash -c 'cd /home/rpi/home-automation && ./scripts/compose-env.sh'
 echo "=== Install HACS in Home Assistant ==="
 sudo -u rpi bash <<'EOF'
 docker exec homeassistant bash -c '
-	set -e
-	wget -qO- https://get.hacs.xyz | bash -
+	curl -4 -fsSL https://get.hacs.xyz | bash -
 '
-docker compose restart homeassistant
 EOF
 
 echo "=== Install Node-RED packages ==="
@@ -151,7 +149,13 @@ docker exec nodered bash -c '
 	npm install node-red-contrib-sun-position
 	npm install node-red-contrib-home-assistant-websocket
 '
+EOF
+
+echo "=== Restarting docker services ==="
+sudo -u rpi bash <<'EOF'
+cd /home/rpi/home-automation
 docker compose restart nodered
+docker compose restart homeassistant
 EOF
 
 #===================================="
