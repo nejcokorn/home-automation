@@ -136,7 +136,16 @@ sudo -u rpi bash -c 'cd /home/rpi/home-automation && ./scripts/compose-env.sh'
 
 echo "=== Install HACS in Home Assistant ==="
 sudo -u rpi bash <<'EOF'
+# Wait for Home Assistant to initialize its config directory.
+for i in {1..60}; do
+	if docker exec homeassistant bash -c 'test -f /config/configuration.yaml'; then
+		break
+	fi
+	sleep 5
+done
+# Install HACS in Home Assistant
 docker exec homeassistant bash -c '
+	cd /config
 	curl -4 -fsSL https://get.hacs.xyz | bash -
 '
 EOF
@@ -157,8 +166,3 @@ cd /home/rpi/home-automation
 docker compose restart nodered
 docker compose restart homeassistant
 EOF
-
-#===================================="
-# Reboot system to apply all changes
-#===================================="
-reboot
