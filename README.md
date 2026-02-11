@@ -156,7 +156,7 @@ Use HACS to install the **Node-RED Companion** integration, which works with `no
 1. Ensure [HACS integration](https://www.hacs.xyz/docs/use/configuration/basic/) is installed in the Home Assistant container.
 2. Restart Home Assistant.
 3. In Home Assistant UI: Settings -> Devices & Services -> Add Integration -> HACS.
-4. In HACS, install **Node-RED Companion[Node-RED Companion Integration](https://github.com/zachowj/hass-node-red)**.
+4. In HACS, install **[Node-RED Companion Integration](https://github.com/zachowj/hass-node-red)**.
 5. Restart Home Assistant again after installation.
 
 ## Setup (high level)
