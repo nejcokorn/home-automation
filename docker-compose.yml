@@ -63,6 +63,10 @@ services:
     volumes:
       - ./homeassistant/config:/config
       - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     environment:
       - TZ=UTC
     restart: unless-stopped
