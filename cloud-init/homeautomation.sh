@@ -191,13 +191,43 @@ echo "=== Install Home Automation Agent ==="
 curl -fL -O https://github.com/nejcokorn/home-automation-agent/releases/download/v1.2.0/home-automation-agent_1.2.0_arm64.deb
 
 # Install home-automation-agent_1.2.0_arm64.deb
-sudo dpkg -i home-automation-agent_1.2.0_arm64.deb
+dpkg -i home-automation-agent_1.2.0_arm64.deb
 
 # Fix broken dependencies if any
 apt-get -f install -y
 
-sudo systemctl daemon-reload
-sudo systemctl enable --now home-automation-agent
+systemctl daemon-reload
+systemctl enable --now home-automation-agent
+
+#===================================="
+# Install VS Code Server
+#===================================="
+
+echo "=== Installing VS Code Server ==="
+
+export HOME=/home/rpi
+export USER=rpi
+curl -fsSL https://code-server.dev/install.sh | sh
+
+# Create config.yaml for code-server with password authentication and no TLS
+echo "=== Creating code-server config file ==="
+
+# create config directory if it doesn't exist and set ownership to rpi
+mkdir -p /home/rpi/.config/code-server
+chmod 755 /home/rpi/.config
+chmod 755 /home/rpi/.config/code-server
+chown -R rpi:rpi /home/rpi/.config
+
+cat <<EOF > "/home/rpi/.config/code-server/config.yaml"
+bind-addr: 0.0.0.0:8080
+auth: password
+password: changeme
+cert: false
+EOF
+
+# Enable and start code-server for the rpi user
+echo "=== Enabling and starting code-server for rpi user ==="
+systemctl enable --now code-server@rpi
 
 #===================================="
 # Setup home automation stack
