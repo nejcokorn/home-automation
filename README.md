@@ -146,7 +146,7 @@ Nodes wrap the agent HTTP API:
 Deployment paths:
 - Manual: follow `rpiManualSetup.md`
 - Automated: use cloud-init scripts `user-data`, `meta-data`,  `network-config`
-  - You can SSH in during setup and monitor progress with:
+  - You can SSH in during setup and monitor progress with:  
     `tail -f /var/log/cloud-init-output.log`
 
 ### Home Assistant Community Store
