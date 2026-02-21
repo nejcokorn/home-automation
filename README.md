@@ -141,6 +141,7 @@ Nodes wrap the agent HTTP API:
 - InfluxDB 2.7 (8086)
 - Grafana (3000)
 - Home Assistant (8123)
+- VS Code Server (8080)
 
 ### Raspberry Pi setup
 Deployment paths:
