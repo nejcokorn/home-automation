@@ -17,6 +17,10 @@ apt:
       Check-Date "false";
     };
 
+# Goes in user-data
+growpart:
+  mode: off
+
 package_update: true
 package_upgrade: true
 

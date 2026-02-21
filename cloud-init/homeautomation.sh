@@ -4,6 +4,80 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 # ================================
+# Partition and format the remaining free space on the disk
+# ================================
+
+echo "=== Partitioning and formatting remaining free space ==="
+
+# Get root device (e.g., /dev/mmcblk0p2 or /dev/nvme0n1p2)
+ROOT_PART=$(findmnt -n -o SOURCE /)
+
+# Extract disk from partition (works for sda1, nvme0n1p2, mmcblk0p2)
+if [[ "$ROOT_PART" =~ p[0-9]+$ ]]; then
+	DISK=$(echo "$ROOT_PART" | sed -E 's/p[0-9]+$//')
+else
+	DISK=$(echo "$ROOT_PART" | sed -E 's/[0-9]+$//')
+fi
+
+echo "Root filesystem is on: $ROOT_PART"
+echo "Detected disk: $DISK"
+
+# Find start of last free space block
+FREE_START=$(parted $DISK unit s print free | grep 'Free Space' | tail -n1 | awk '{print $1}')
+
+if [ -z "$FREE_START" ]; then
+	echo "No free space detected on $DISK. Skipping partitioning."
+else
+	echo "Creating partition from sector ${FREE_START} to 100%..."
+
+	parted -s "$DISK" mkpart primary ext4 "${FREE_START}" 100%
+
+	partprobe "$DISK"
+	sleep 2
+
+	# Get last partition name
+	NEW_PART=$(lsblk -ln -o NAME "$DISK" | tail -n1)
+	NEW_PART="/dev/$NEW_PART"
+
+	echo "Formatting $NEW_PART..."
+
+	mkfs.ext4 -F -L data "$NEW_PART"
+
+	echo "Done. Created and formatted: $NEW_PART"
+
+# ================================
+# Migrate /home/rpi to the new partition
+# ================================
+
+	echo "=== Migrating /home/rpi to new partition ==="
+
+	TMP_MOUNT="/mnt/new_home"
+	FINAL_MOUNT="/home/rpi"
+
+	echo "Preparing migration of $FINAL_MOUNT..."
+
+	mkdir -p "$TMP_MOUNT"
+
+	echo "Temporarily mounting $NEW_PART..."
+	mount "$NEW_PART" "$TMP_MOUNT"
+
+	echo "Copying existing data..."
+	rsync -aAX "$FINAL_MOUNT"/ "$TMP_MOUNT"/
+
+	echo "Updating /etc/fstab..."
+	cp /etc/fstab /etc/fstab.backup
+	echo "LABEL=data	/home/rpi	ext4	defaults,noatime	0	2" >> /etc/fstab
+
+	echo "Unmounting temporary mount..."
+	umount "$TMP_MOUNT"
+
+	echo "Mounting new /home/rpi..."
+	mount "$FINAL_MOUNT"
+
+	echo "Migration complete."
+fi
+
+# ================================
 # Docker installation
 # ================================
 
