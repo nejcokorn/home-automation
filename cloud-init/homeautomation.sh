@@ -19,6 +19,10 @@ else
 	DISK=$(echo "$ROOT_PART" | sed -E 's/[0-9]+$//')
 fi
 
+# Resize root partition to 32GB
+parted ---pretend-input-tty "$DISK" resizepart 2 32GiB <<< "Yes"
+resize2fs "$ROOT_PART"
+
 echo "Root filesystem is on: $ROOT_PART"
 echo "Detected disk: $DISK"
 
