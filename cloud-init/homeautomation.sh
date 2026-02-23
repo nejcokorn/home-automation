@@ -240,7 +240,8 @@ cd /home/rpi
 git clone https://github.com/nejcokorn/home-automation.git
 chown rpi:rpi /home/rpi -R
 cd /home/rpi/home-automation
-sudo -u rpi bash -c 'cd /home/rpi/home-automation && ./scripts/compose-env.sh'
+sudo -u rpi bash -c 'cd /home/rpi/home-automation && ./scripts/configure.sh'
+sudo -u rpi bash -c 'cd /home/rpi/home-automation && docker compose up -d'
 
 echo "=== Install HACS in Home Assistant ==="
 sudo -u rpi bash <<'EOF'
