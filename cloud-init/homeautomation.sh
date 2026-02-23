@@ -82,11 +82,19 @@ else
 fi
 
 # ================================
-# Docker installation
+# Update and upgrade system packages
 # ================================
-
 echo "=== Update apt cache and install prerequisites ==="
 apt-get update
+echo "=== Repair broken dependencies (if any) ==="
+apt-get -f install -y
+echo "=== Full upgrade to sync package versions ==="
+apt-get full-upgrade -y
+
+# ================================
+# Docker installation
+# ================================
+echo "=== Install prerequisites ==="
 apt-get install -y ca-certificates curl
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
