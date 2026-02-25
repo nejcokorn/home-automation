@@ -137,9 +137,10 @@ Requires=network.target
 After=network.target
 
 [Service]
+StandardOutput=null
 Type=oneshot
-ExecStart=/sbin/ip link set can0 up type can bitrate 500000
-ExecStartPost=/sbin/ifconfig can0 txqueuelen 65536
+ExecStart=/sbin/ip link set can0 up type can bitrate 500000 restart-ms 1000
+ExecStartPost=/sbin/ip link set can0 txqueuelen 65536
 ExecStop=/sbin/ip link set can0 down
 RemainAfterExit=yes
 
@@ -163,9 +164,10 @@ Requires=network.target
 After=network.target
 
 [Service]
+StandardOutput=null
 Type=oneshot
-ExecStart=/sbin/ip link set can1 up type can bitrate 500000
-ExecStartPost=/sbin/ifconfig can1 txqueuelen 65536
+ExecStart=/sbin/ip link set can1 up type can bitrate 500000 restart-ms 1000
+ExecStartPost=/sbin/ip link set can1 txqueuelen 65536
 ExecStop=/sbin/ip link set can1 down
 RemainAfterExit=yes
 
