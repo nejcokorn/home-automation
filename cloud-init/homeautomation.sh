@@ -90,6 +90,8 @@ echo "=== Repair broken dependencies (if any) ==="
 apt-get -f install -y
 echo "=== Full upgrade to sync package versions ==="
 apt-get full-upgrade -y
+echo "=== Install required packages ==="
+apt-get install -y avahi-daemon net-tools iproute2 raspi-config build-essential git curl wget unzip
 
 # ================================
 # Docker installation
