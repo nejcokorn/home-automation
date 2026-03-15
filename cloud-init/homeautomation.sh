@@ -92,6 +92,25 @@ echo "=== Full upgrade to sync package versions ==="
 apt-get full-upgrade -y
 echo "=== Install required packages ==="
 apt-get install -y avahi-daemon net-tools iproute2 raspi-config build-essential git curl wget unzip
+echo "=== Fix missing packages ==="
+apt-get update --fix-missing
+
+# ================================
+# Install stlink tools for flashing STM32 microcontrollers
+# ================================
+echo "=== Install stlink tools for flashing STM32 microcontrollers ==="
+apt-get install -y stlink-tools
+
+# Create udev rule for ST-Link
+echo "=== Creating udev rule for ST-Link ==="
+echo 'ATTRS{idVendor}=="0483", MODE="0666"' | tee /etc/udev/rules.d/49-stlinkv2.rules > /dev/null
+
+# Reload udev rules
+echo "=== Reloading udev rules ==="
+udevadm control --reload-rules
+udevadm trigger
+
+echo "=== ST-Link tools installation complete ==="
 
 # ================================
 # Docker installation
